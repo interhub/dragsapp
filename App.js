@@ -4,20 +4,29 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Provider, connect } from "react-redux";
 import store from './src/store/store.js'
 import Home from "./src/pages/Home.js";
-import { HOME } from "./src/store/screenNames";
-import moment from 'moment'
+import Add from "./src/pages/Add.js";
+import { HOME, ADD, DETAILS } from "./src/store/screenNames";
+//navigate
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Details from "./src/pages/Details";
+
+const Stack = createStackNavigator();
 
 function App( {screen} ) {
 
-  const now = moment().format('DD monch, hh:mm')
-
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>{now}</Text>
-      {screen === HOME && <Home/>}
-      {/*{screen === HOME && <Home/>}*/}
+    // <SafeAreaView style={styles.container}>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={HOME}>
+        <Stack.Screen options={{title: 'Главная'}} name={HOME} component={Home}/>
+        <Stack.Screen options={{title: 'Добавление'}} name={ADD} component={Add}/>
+        <Stack.Screen options={{title: 'Просмотр'}} name={DETAILS} component={Details}/>
+      </Stack.Navigator>
       <StatusBar style="auto"/>
-    </SafeAreaView>
+    </NavigationContainer>
+    // </SafeAreaView>
   );
 }
 
