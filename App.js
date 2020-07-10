@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, UIManager, Platform } from 'react-native';
 import { Provider, connect } from "react-redux";
 import store from './src/store/store.js'
 import Home from "./src/pages/Home.js";
@@ -16,6 +16,12 @@ import moment from 'moment'
 
 moment.locale('ru')
 const Stack = createStackNavigator();
+
+if (Platform.OS === "android") {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 function App( {screen} ) {
 

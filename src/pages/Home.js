@@ -5,9 +5,10 @@ import { Button } from "react-native-elements";
 import { NavigationContainer } from "@react-navigation/native";
 import { ADD, DETAILS } from "../store/screenNames";
 import moment from 'moment'
+import { setScreen } from "../store/actions";
 
 
-function Home( {screen, navigation} ) {
+function Home( {screen, navigation, setScreen} ) {
   const now = moment().format('DD - MMMM, hh:mm');
   return (
     <View style={styles.container}>
@@ -18,6 +19,7 @@ function Home( {screen, navigation} ) {
           title="Добавить новую заметку"
           onPress={() => {
             // navigation.navigate(ADD)
+            setScreen(ADD)
             navigation.push(ADD)
           }}
         />
@@ -40,8 +42,11 @@ function Home( {screen, navigation} ) {
 const mapStateToProps = ( state ) => ({
   screen: state.screen
 })
+const mapDispatchToProps = {
+  setScreen
+}
 
-export default connect(mapStateToProps)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const styles = StyleSheet.create({
   container: {

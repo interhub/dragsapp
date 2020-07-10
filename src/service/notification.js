@@ -21,6 +21,27 @@ const put = async () => {
       seconds: 2,
       repeats: false
     },
+    // trigger: new Date(
+    //   new Date().getFullYear(),
+    //   new Date().getMonth(),
+    //   new Date().getDate(),
+    //   new Date().getHours(),
+    //   new Date().getMinutes(),
+    //   new Date().getSeconds() + 1
+    // ),
+    // trigger:{
+    //   hour: 11,
+    //   minute: 35,
+    //   repeats: true
+    // }
+    // trigger:{
+    //   repeats: true,
+    //   // type: 'timeInterval',
+    //   seconds: 2000,
+    //   // hour: 11,
+    //   // minute: 51  ,
+    // }
+
   });
   console.log(item)
   // Notifications.cancelAllScheduledNotificationsAsync()

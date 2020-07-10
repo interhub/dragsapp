@@ -1,0 +1,12 @@
+export default {
+  TABLET: 'TABLET',
+  AMPULE: 'AMPULE',
+  CUPS: 'CUPS',
+  DROPS: 'DROPS',
+  SYRINGE: 'SYRINGE',
+  CAPSULE: 'CAPSULE',
+  TABLESPOON: 'TABLESPOON',
+  TEASPOON: 'TEASPOON',
+  GR: 'GR',
+  ML: 'ML'
+}

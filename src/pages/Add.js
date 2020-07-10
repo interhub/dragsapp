@@ -1,368 +1,106 @@
-import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from "react-redux";
-import { Button } from "react-native-elements";
+import { Button, Icon, Input } from "react-native-elements";
 import put from "../service/notification";
-
-import { Dropdown } from "react-native-material-dropdown";
+import PeriodsName from '../vars/periodsName.js'
+// import Drop from "react-native-material-dropdown";
 import TimePicker from "react-native-24h-timepicker";
-import CalendarPicker from "react-native-calendar-picker";
-import Dialog, { DialogContent } from "react-native-popup-dialog";
+import { setScreen } from "../store/actions";
+import { HOME } from "../store/screenNames";
 
-let periods = [
-  {
-    value: "everyday",
-    label: "Каждый день",
-  },
-  {
-    value: "twodays",
-    label: "Каждые два дня",
-  },
-  {
-    value: "threedays",
-    label: "Каждые три дня",
-  },
-  {
-    value: "nomatter",
-    label: "Не имеет значения",
-  },
-];
+const H = Dimensions.get('window').height;
+// import CalendarPicker from "react-native-calendar-picker";
+// import Dialog, { DialogContent } from "react-native-popup-dialog";
 
-let types = [
-  {
-    value: "tablet",
-    label: "Таблетка(-и/-ок)",
-  },
-  {
-    value: "ampule",
-    label: "Ампул(-а/-ы)",
-  },
-  {
-    value: "cups",
-    label: "Чашка(-и/-ек)",
-  },
-  {
-    value: "drops",
-    label: "Капля(-и/-ель)",
-  },
-  {
-    value: "syringe",
-    label: "Шприц(-а/-ов)",
-  },
-  {
-    value: "capsule",
-    label: "Капсул(-а, -ы)",
-  },
-  {
-    value: "tablespoon",
-    label: "Стол. ложка(-и/-ек)",
-  },
-  {
-    value: "teaspoon",
-    label: "Чай. ложка(-и/-ек)",
-  },
-  {
-    value: "gr",
-    label: "Грамм",
-  },
-  {
-    value: "ml",
-    label: "мл",
-  },
-];
+// id: Date.now(),
+// medicineName: "Название препарата",
+// usagePeriod: "everyday",
+// usageTime: [],
+// medicineType: types[0].value,
+// medicineTypeLabel: types[0].label,
+// dosage: null,
+// startDateDay: null,
+// startDateMonth: null,
+// startDateYear: null,
+// startDateVisible: false,
+//
+// endDateDay: null,
+// endDateMonth: null,
+// endDateYear: null,
+// endDateVisible: false,
+//
+// checked: false,
 
-function Add( {screen, navigation} ) {
-  const [item,setItem] = useState({})
+function Add( {screen, navigation, setScreen} ) {
+  const picker = useRef()
+  const [input, setInput] = useState({
+    id: [],
+    name: '',
+    period: PeriodsName.EVERYDAY,
+    time: [],
+    type: '',
+    dose: ''
+  })
+
+  const nameInput = ( txt ) => {
+    setInput({...input, name: txt})
+  }
+  const addTime = ( H, M ) => {
+    let items = [...input.time];
+    items.push({H, M})
+    setInput({...input, time: items})
+  }
+
   return (
-    // <View style={styles.container}>
-    //   <Text>Страница добавления записи</Text>
-    //   <Button title={'Вызвать уведомление'} onPress={() => put()} containerStyle={styles.btn}/>
-    //   <Button title={'Назад'} onPress={() => navigation.goBack()} containerStyle={styles.btn}/>
-    // </View>
-    <ScrollView style={styles.container}>
-      <View style={styles.form}>
-        {/* Название препарата */}
-        <View style={styles.input}>
-          <Image
-            style={{width: 30, height: 30, marginRight: 10}}
-            source={{
-              uri: "https://img.icons8.com/material/4ac144/256/user-male.png",
-            }}
-          />
-          <TextInput
-            style={styles.inputText}
-            onChangeText={( text ) => {
-              this.setState({medicineName: text});
-            }}
-          >
-            {this.state.medicineName}
-          </TextInput>
-        </View>
-
-        {/* Периодичность приема */}
-        <Dropdown
-          label="Периодичность приема"
-          data={periods}
-          value="everyday"
-          containerStyle={styles.dropdown}
-          onChangeText={( value ) => {
-            this.setState({usagePeriod: value});
-          }}
+    <ScrollView>
+      <View style={styles.container}>
+        <Input
+          value={input.name}
+          onChangeText={nameInput}
+          placeholder='Название препарата'
+          leftIcon={{type: 'font-awesome', name: 'user', color: '#FFC56D'}}
         />
-
-        {/* Время приема */}
-        <View style={styles.usageTimeMainContainer}>
-          {/* Добавить время */}
-          <View style={styles.usageTimeInputContainer}>
-            <Text style={styles.inputText}>Время приема</Text>
-            <TouchableOpacity
-              onPress={() => this.TimePicker.open()}
-              style={{marginRight: 0}}
-            >
-              <Text style={styles.buttonText}>Добавить</Text>
-            </TouchableOpacity>
-            <TimePicker
-              minuteInterval={5}
-              textCancel={"Назад"}
-              textConfirm={"Принять"}
-              ref={( ref ) => {
-                this.TimePicker = ref;
-              }}
-              onCancel={() => this.TimePicker.close()}
-              onConfirm={( hour, minute ) =>
-                this.addUsageTimeToObject(hour, minute)
-              }
-            />
+        {input.time.map(( el, id ) => {
+          return <Text>
+            {el.H}:{el.M}
+          </Text>
+        })}
+        <Button title={'Вызвать уведомление'} onPress={() => put()}
+                containerStyle={styles.btn}/>
+        <Button title={'Назад'} onPress={() => {
+          setScreen(HOME)
+          navigation.goBack()
+        }} containerStyle={styles.btn}/>
+        <TouchableOpacity
+          // activeOpacity={.9}
+          onPress={() => {
+            picker.current.open()
+          }}>
+          <View style={styles.btnContainer}>
+            <Text style={{fontSize: 20}}>Время приема</Text>
+            <Text style={{fontSize: 15}}>Добавить</Text>
           </View>
-
-          {/* Список таймкодов */}
-          <SafeAreaView style={{flex: 1}}>
-            <FlatList
-              data={this.state.usageTime}
-              renderItem={( {item} ) => (
-                <this.createUsageTime
-                  hours={item.hours}
-                  minutes={item.minutes}
-                  id={item.id}
-                />
-              )}
-              keyExtractor={( item ) => item.id}
-              horizontal={true}
-              style={{paddingHorizontal: 20}}
-            />
-          </SafeAreaView>
-        </View>
-
-        {/* Дозировка */}
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            marginHorizontal: 20,
-            marginVertical: 20,
-          }}
-        >
-          <Dropdown
-            data={types}
-            value="tablet"
-            label={() => {
-              for (let i = 0; i < data.length; i++) {
-                if (data[i].value == value) {
-                  return data[i].label;
-                }
-              }
-            }}
-            containerStyle={{
-              width: "50%",
-              height: 50,
-              flex: 1,
-              justifyContent: "center",
-            }}
-            onChangeText={( value, label ) => {
-              this.setState({
-                medicineType: value,
-                medicineTypeLabel: types[label].label,
-              });
-            }}
-          />
-          <TextInput
-            style={styles.doseTextInput}
-            onChangeText={( value ) => {
-              this.setState({dosage: value});
-            }}
-          >
-            Дозировка
-          </TextInput>
-        </View>
-
-        {/* Выбор даты НАЧАЛО */}
-        <Text
-          onPress={() => {
-            this.setState({startDateVisible: true});
-          }}
-        >
-          {(() => {
-            let {startDateDay, startDateMonth, startDateYear} = this.state;
-            if (startDateDay && startDateMonth && startDateYear) {
-              return `Начало: ${startDateDay}.${startDateMonth}.${startDateYear}`;
-            } else {
-              return `Начало курса приема`;
-            }
-          })()}
-        </Text>
-        <Dialog
-          visible={this.state.startDateVisible}
-          onTouchOutside={() => {
-            this.setState({startDateVisible: false});
-          }}
-        >
-          <DialogContent>
-            <CalendarPicker
-              onDateChange={( date ) => {
-                let monthList = [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
-                ];
-                this.setState({
-                  startDateDay: date.toString().split(" ")[2],
-                  startDateMonth: (() => {
-                    let monthOrder =
-                      monthList.indexOf(date.toString().split(" ")[1]) +
-                      1 +
-                      "";
-                    if (monthOrder.length == 1) {
-                      return "0" + monthOrder;
-                    }
-                    return monthOrder;
-                  })(),
-                  startDateYear: date.toString().split(" ")[3],
-                });
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-
-        {/* Выбор даты КОНЕЦ */}
-        <Text
-          onPress={() => {
-            this.setState({endDateVisible: true});
-          }}
-        >
-          {(() => {
-            let {endDateDay, endDateMonth, endDateYear} = this.state;
-            if (endDateDay && endDateMonth && endDateYear) {
-              return `Начало: ${endDateDay}.${endDateMonth}.${endDateYear}`;
-            } else {
-              return `Конец курса приема`;
-            }
-          })()}
-        </Text>
-        <Dialog
-          visible={this.state.endDateVisible}
-          onTouchOutside={() => {
-            this.setState({endDateVisible: false});
-          }}
-        >
-          <DialogContent>
-            <CalendarPicker
-              onDateChange={( date ) => {
-                let monthList = [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
-                ];
-                this.setState({
-                  endDateDay: date.toString().split(" ")[2],
-                  endDateMonth: (() => {
-                    let monthOrder =
-                      monthList.indexOf(date.toString().split(" ")[1]) +
-                      1 +
-                      "";
-                    if (monthOrder.length == 1) {
-                      return "0" + monthOrder;
-                    }
-                    return monthOrder;
-                  })(),
-                  endDateYear: date.toString().split(" ")[3],
-                });
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      </View>
-
-      {/* Кнопка сохранения данной заметки */}
-      <Button
-        title="Добавить"
-        onPress={() => {
-          let {
-            id,
-            medicineName,
-            usagePeriod,
-            usageTime,
-            medicineType,
-            medicineTypeLabel,
-            dosage,
-            startDateDay,
-            startDateMonth,
-            startDateYear,
-            endDateDay,
-            endDateMonth,
-            endDateYear,
-            checked,
-          } = this.state;
-          if (
-            !medicineName ||
-            !usagePeriod ||
-            !usageTime ||
-            !medicineType ||
-            !medicineTypeLabel ||
-            !dosage
-          ) {
-           return Alert.alert("Ошибка", "Заполните все поля");
-          } else {
-            this.saveData(
-              id,
-              medicineName,
-              usagePeriod,
-              usageTime,
-              medicineType,
-              medicineTypeLabel,
-              dosage,
-              startDateDay,
-              startDateMonth,
-              startDateYear,
-              endDateDay,
-              endDateMonth,
-              endDateYear,
-              checked
-            );
-            navigate.push("Home");
+        </TouchableOpacity>
+        {/*<Button title={'Открыть ввод'} onPress={() => picker.current.open()} containerStyle={styles.btn}/>*/}
+        <TimePicker
+          minuteInterval={5}
+          textCancel={"Назад"}
+          textConfirm={"Принять"}
+          ref={picker}
+          // ref={( ref ) => {
+          //   TimePicker = ref;
+          // }}
+          onCancel={() => picker.current.close()}
+          onConfirm={( H, M ) => {
+            addTime(H, M)
+            picker.current.close()
           }
-        }}
-      />
+          }
+        />
+      </View>
     </ScrollView>
+
   );
 }
 
@@ -370,18 +108,106 @@ const mapStateToProps = ( state ) => ({
   screen: state.screen
 })
 
-export default connect(mapStateToProps)(Add)
+const mapDispatchToProps = {
+  setScreen
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Add)
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    minHeight: H,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   btn: {
     width: '90%',
     margin: 10
   },
-  btnBox: {width: 300}
+  btnBox: {width: 300},
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: 355,
+    height: 80,
+    borderTopWidth: 1,
+    borderBottomWidth: 1
+  }
+
 });
+
+//
+// const styles = StyleSheet.create({
+//   container: {
+//     backgroundColor: "#fff",
+//   },
+//   form: {},
+//   input: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     paddingHorizontal: 20,
+//     paddingVertical: 20,
+//     borderBottomWidth: 1,
+//     borderBottomColor: "#E2E2E2",
+//     width: Dimensions.get("window").width,
+//   },
+//
+//   usageTimeMainContainer: {
+//     flexWrap: "wrap",
+//     borderBottomWidth: 1,
+//     borderBottomColor: "#E2E2E2",
+//   },
+//   usageTimeInputContainer: {
+//     flexDirection: "row",
+//     paddingHorizontal: 20,
+//     paddingVertical: 20,
+//     alignItems: "center",
+//     width: Dimensions.get("window").width,
+//     justifyContent: "space-between",
+//   },
+//   usageTimeItem: {
+//     backgroundColor: "#fff",
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//     borderRadius: 18,
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 1,
+//     },
+//     shadowOpacity: 0.22,
+//     shadowRadius: 2.22,
+//
+//     elevation: 3,
+//     marginRight: 20,
+//     marginBottom: 20,
+//   },
+//   doseTextInput: {
+//     width: "50%",
+//     height: 40,
+//     flex: 1,
+//     justifyContent: "center",
+//     paddingHorizontal: 20,
+//     borderBottomWidth: 1,
+//     marginLeft: 20,
+//     paddingLeft: 0,
+//     fontSize: 15,
+//     borderColor: "rgb(225, 225, 225)",
+//   },
+//
+//   dropdown: {
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//     paddingBottom: 20,
+//     borderBottomWidth: 1,
+//     borderBottomColor: "#E2E2E2",
+//   },
+//   inputText: {
+//     fontSize: 18,
+//     color: "#000",
+//   },
+// });

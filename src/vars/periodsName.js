@@ -1,0 +1,6 @@
+export default {
+  EVERYDAY: 'EVERYDAY',
+  TWODAY: 'TWODAY',
+  THREEDAY: 'THREEDAY',
+  NONE: 'NONE'
+}
