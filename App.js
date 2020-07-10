@@ -3,14 +3,14 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, Text, View, UIManager, Platform } from 'react-native';
 import { Provider, connect } from "react-redux";
 import store from './src/store/store.js'
-import Home from "./src/pages/Home.js";
-import Add from "./src/pages/Add.js";
+import Home from "./src/pages/Home/Home.js";
+import Add from "./src/pages/Add/Add.js";
 import { HOME, ADD, DETAILS } from "./src/store/screenNames";
 //navigate
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Details from "./src/pages/Details";
+import Details from "./src/pages/Details/Details";
 import 'moment/locale/ru'
 import moment from 'moment'
 

@@ -3,9 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { NavigationContainer } from "@react-navigation/native";
-import { ADD, DETAILS } from "../store/screenNames";
+import { ADD, DETAILS } from "../../store/screenNames";
 import moment from 'moment'
-import { setScreen } from "../store/actions";
+import { setScreen } from "../../store/actions";
 
 
 function Home( {screen, navigation, setScreen} ) {
