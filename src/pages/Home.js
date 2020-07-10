@@ -3,8 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { NavigationContainer } from "@react-navigation/native";
-import moment from 'moment'
 import { ADD, DETAILS } from "../store/screenNames";
+import moment from 'moment'
+
 
 function Home( {screen, navigation} ) {
   const now = moment().format('DD - MMMM, hh:mm');

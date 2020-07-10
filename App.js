@@ -11,7 +11,10 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Details from "./src/pages/Details";
+import 'moment/locale/ru'
+import moment from 'moment'
 
+moment.locale('ru')
 const Stack = createStackNavigator();
 
 function App( {screen} ) {
