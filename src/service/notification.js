@@ -64,6 +64,7 @@ const setNotification = async ( {
     }
   })()
 
+
   //TEST
   if (test === true) {
     const item = await Notifications.presentNotificationAsync({
