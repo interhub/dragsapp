@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
   LayoutAnimation,
@@ -21,10 +21,12 @@ import SelectTypes from "./SelectTypes";
 import InputDate from "./InputDate";
 import moment from 'moment'
 import { AsyncStorage } from 'react-native';
+import { StackActions } from '@react-navigation/native';
 
 const H = Dimensions.get('window').height;
 
-function Add( {screen, navigation, setScreen} ) {
+function Add( {route, screen, navigation, setScreen} ) {
+  const edit = route?.params?.edit;
   const picker = useRef()
   //состояние данных ввода
   const [input, setInput] = useState({
@@ -37,6 +39,13 @@ function Add( {screen, navigation, setScreen} ) {
     start: 0,
     end: 0
   })
+  useEffect(() => {
+    if (edit) {
+      setInput(edit)
+      navigation.setOptions({title: 'Редактирование'})
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+    }
+  }, [])
   //изменение имени препарата
   const nameInput = ( txt ) => {
     setInput({...input, name: txt})
@@ -99,16 +108,19 @@ function Add( {screen, navigation, setScreen} ) {
   //сохранить отчет в памяти устройства
   const saveOnDevice = () => {
     // AsyncStorage.setItem('input', JSON.stringify(input))
-    AsyncStorage.getItem('inputs')
+    AsyncStorage.getItem('input')
                 .then(data => {
+                  console.log('old data', data)
                   if (data === null) {
-                    return AsyncStorage.setItem('input', JSON.stringify([input]))
+                    return AsyncStorage.setItem('input', JSON.stringify([{...input}]))
                   } else {
-                    return AsyncStorage.setItem('input', JSON.stringify([...data, input]))
+                    return AsyncStorage.setItem('input', JSON.stringify([...JSON.parse(data), {...input}]))
                   }
                 })
                 .then(() => {
-                  navigation.goBack()
+                  // navigation.goBack()
+                  navigation.dispatch(StackActions.popToTop());
+
                 })
   }
 
@@ -123,7 +135,9 @@ function Add( {screen, navigation, setScreen} ) {
   //итоговое добавление записи
   const addInput = () => {
     // console.log(moment(input.end).diff(input.start, 'days'), 'diffff')
-    confirmForm() //TODO
+    if (!confirmForm()) {
+      return
+    }//TODO
     setNotification(input)
     .then(ids => {
       if (Array.isArray(ids)) {
