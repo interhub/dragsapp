@@ -4,6 +4,7 @@ import PeriodsName from '../vars/periodsName.js'
 import TypesName from '../vars/typesName.js'
 import Types from '../vars/types.js'
 import moment from 'moment'
+import { AsyncStorage } from 'react-native'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -27,6 +28,7 @@ const setNotification = async ( {
                                   end = 0,
                                   test = false
                                 } ) => {
+  // return AsyncStorage.clear()
   // return  Notifications.cancelAllScheduledNotificationsAsync() //all cancel notes
   // return Notifications.dismissAllNotificationsAsync() //all clear
   // return  Notifications.removeAllNotificationListeners() //listener
@@ -43,7 +45,7 @@ const setNotification = async ( {
   );
   const mass = [];
   //по дефолту максимальная длительность
-  let count = 3;
+  let count = 1;
   //раздница в днях (нужна только при end!==0
   let diff = Math.abs(moment(end).diff(start, 'days')) + 1
   //получить переод повтора
@@ -64,26 +66,11 @@ const setNotification = async ( {
 
   //TEST
   if (test === true) {
-    const item = await Notifications.scheduleNotificationAsync({
-      content:
-
-
-      {
-        title: 'Remember to drink water!',
-        body: 'This text test message!',
-        vibrate: true,
-      },
-      trigger: {
-        // type: 'timeInterval',
-        // repeats: true,
-        // year:2020,
-        seconds: 5,
-        repeats:false
-      }
-      // trigger: {
-      //   repeats: false,
-      //   seconds: 8
-      // }
+    const item = await Notifications.presentNotificationAsync({
+      // content: {
+      title: 'Remember to drink water!',
+      body: 'This text test message!',
+      vibrate: true,
     })
     // let info=await Notifications.getAllScheduledNotificationsAsync()
     // console.log(info,'INFO')
@@ -94,24 +81,24 @@ const setNotification = async ( {
   if (start === 0 && end !== 0) {
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < diff; i += currentPeriod) {
-        const item = await Notifications.scheduleNotificationAsync({
-          content: {
-            title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
-            vibrate: true,
-          },
-          trigger: new Date(
-            new Date().getFullYear() + 0,
-            new Date().getMonth() + 0,
-            new Date().getDate() + i,
-            time[j].H,
-            time[j].M,
-            1
-          )
-        });
-        mass.push(item)
-      }
+      // for (let i = 0; i < diff; i += currentPeriod) {
+      const item = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Напоминание о приеме',
+          body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
+          vibrate: true,
+        },
+        trigger: new Date(
+          new Date().getFullYear() + 0,
+          new Date().getMonth() + 0,
+          new Date().getDate(),
+          time[j].H,
+          time[j].M,
+          1
+        )
+      });
+      mass.push(item)
+      // }
     }
 
   }
@@ -119,48 +106,48 @@ const setNotification = async ( {
   if (start !== 0 && end === 0) {
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < count; i += currentPeriod) {
-        const item = await Notifications.scheduleNotificationAsync({
-          content: {
-            title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
-            vibrate: true,
-          },
-          trigger: new Date(
-            new Date(start).getFullYear() + 0,
-            new Date(start).getMonth() + 0,
-            new Date(start).getDate() + i,
-            time[j].H,
-            time[j].M,
-            1
-          )
-        });
-        mass.push(item)
-      }
+      // for (let i = 0; i < count; i += currentPeriod) {
+      const item = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Напоминание о приеме',
+          body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
+          vibrate: true,
+        },
+        trigger: new Date(
+          new Date(start).getFullYear() + 0,
+          new Date(start).getMonth() + 0,
+          new Date(start).getDate(),
+          time[j].H,
+          time[j].M,
+          1
+        )
+      });
+      mass.push(item)
+      // }
     }
   }
   //ALL HAVE
   if (start !== 0 && end !== 0) {
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < diff; i += currentPeriod) {
-        const item = await Notifications.scheduleNotificationAsync({
-          content: {
-            title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
-            vibrate: true,
-          },
-          trigger: new Date(
-            new Date(start).getFullYear() + 0,
-            new Date(start).getMonth() + 0,
-            new Date(start).getDate() + i,
-            time[j].H,
-            time[j].M,
-            1
-          )
-        });
-        mass.push(item)
-      }
+      // for (let i = 0; i < diff; i += currentPeriod) {
+      const item = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Напоминание о приеме',
+          body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
+          vibrate: true,
+        },
+        trigger: new Date(
+          new Date(start).getFullYear() + 0,
+          new Date(start).getMonth() + 0,
+          new Date(start).getDate(),
+          time[j].H,
+          time[j].M,
+          1
+        )
+      });
+      mass.push(item)
+      // }
     }
   }
   //NONE
@@ -168,24 +155,24 @@ const setNotification = async ( {
     //повтор по количеству времени
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < count; i += currentPeriod) {
-        const item = await Notifications.scheduleNotificationAsync({
-          content: {
-            title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
-            vibrate: true,
-          },
-          trigger: new Date(
-            new Date().getFullYear() + 0,
-            new Date().getMonth() + 0,
-            new Date().getDate() + i,
-            time[j].H,
-            time[j].M,
-            1
-          )
-        });
-        mass.push(item)
-      }
+      // for (let i = 0; i < count; i += currentPeriod) {
+      const item = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Напоминание о приеме',
+          body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
+          vibrate: true,
+        },
+        trigger: new Date(
+          new Date().getFullYear() + 0,
+          new Date().getMonth() + 0,
+          new Date().getDate(),
+          time[j].H,
+          time[j].M,
+          1
+        )
+      });
+      mass.push(item)
+      // }
     }
   }
 
