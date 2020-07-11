@@ -21,11 +21,11 @@ export default ( {input, onSelectType, onSelectDose} ) => {
   return <View style={styles.container}>
     <View style={styles.select}>
       <RNPickerSelect
-        value={input.type}
+        // value={input.type}
         style={styles.select}
         placeholder={{
           label: 'Единица',
-          value: TypesName.TABLET,
+          value: null,
           color: '#7a7a7a',
         }}
         onValueChange={onSelectType}

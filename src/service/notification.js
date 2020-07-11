@@ -27,6 +27,11 @@ const setNotification = async ( {
                                   end = 0,
                                   test = false
                                 } ) => {
+  // return  Notifications.cancelAllScheduledNotificationsAsync() //all cancel notes
+  // return Notifications.dismissAllNotificationsAsync() //all clear
+  // return  Notifications.removeAllNotificationListeners() //listener
+  // dismissAllNotificationsAsync (delete one)
+  // time[0].M=48;
   console.log(name, period, time, type, dose, start, end, 'all')
   const now = new Date(
     new Date().getFullYear(),
@@ -36,22 +41,64 @@ const setNotification = async ( {
     new Date().getMinutes(),
     new Date().getSeconds() + 1
   );
-  const mass = []
-  let count = 10;
+  const mass = [];
+  //по дефолту максимальная длительность
+  let count = 3;
   //раздница в днях (нужна только при end!==0
   let diff = Math.abs(moment(end).diff(start, 'days')) + 1
-  // return console.log(diff, 'diff')
-  //учет начала и конца
-  ///
+  //получить переод повтора
+  let currentPeriod = (() => {
+    switch (period) {
+      case PeriodsName.EVERYDAY:
+        return 1;
+      case PeriodsName.TWODAY:
+        return 2;
+      case PeriodsName.THREEDAY:
+        return 3;
+      case PeriodsName.NONE:
+        return 1;
+      default:
+        return 1
+    }
+  })()
+
+  //TEST
+  if (test === true) {
+    const item = await Notifications.scheduleNotificationAsync({
+      content:
+
+
+      {
+        title: 'Remember to drink water!',
+        body: 'This text test message!',
+        vibrate: true,
+      },
+      trigger: {
+        // type: 'timeInterval',
+        // repeats: true,
+        // year:2020,
+        seconds: 5,
+        repeats:false
+      }
+      // trigger: {
+      //   repeats: false,
+      //   seconds: 8
+      // }
+    })
+    // let info=await Notifications.getAllScheduledNotificationsAsync()
+    // console.log(info,'INFO')
+    mass.push(item)
+    return [mass]
+  }
   //ONLY END
   if (start === 0 && end !== 0) {
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < diff; i++) {
+      for (let i = 0; i < diff; i += currentPeriod) {
         const item = await Notifications.scheduleNotificationAsync({
           content: {
             title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.filter(el => el.value = type)}`,
+            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
             vibrate: true,
           },
           trigger: new Date(
@@ -72,11 +119,11 @@ const setNotification = async ( {
   if (start !== 0 && end === 0) {
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < count; i += currentPeriod) {
         const item = await Notifications.scheduleNotificationAsync({
           content: {
             title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.filter(el => el.value = type)}`,
+            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
             vibrate: true,
           },
           trigger: new Date(
@@ -96,11 +143,11 @@ const setNotification = async ( {
   if (start !== 0 && end !== 0) {
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < diff; i++) {
+      for (let i = 0; i < diff; i += currentPeriod) {
         const item = await Notifications.scheduleNotificationAsync({
           content: {
             title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.filter(el => el.value = type)}`,
+            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
             vibrate: true,
           },
           trigger: new Date(
@@ -121,11 +168,11 @@ const setNotification = async ( {
     //повтор по количеству времени
     for (let j = 0; j < time.length; j++) {
       //повтор по количеству дней count
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < count; i += currentPeriod) {
         const item = await Notifications.scheduleNotificationAsync({
           content: {
             title: 'Напоминание о приеме',
-            body: `${name} в количестве ${dose} ${Types.filter(el => el.value = type)}`,
+            body: `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`,
             vibrate: true,
           },
           trigger: new Date(
@@ -141,20 +188,7 @@ const setNotification = async ( {
       }
     }
   }
-  //TEST
-  if (test === true) {
-    //повтор по количеству времени
-    //повтор по количеству дней count
-    const item = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Remember to drink water!',
-        body: 'This text test message!',
-        vibrate: true,
-      },
-      trigger: now
-    });
-    mass.push(item)
-  }
+
 
   return mass
 

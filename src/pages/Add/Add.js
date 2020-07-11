@@ -20,6 +20,7 @@ import TypesName from '../../vars/typesName.js'
 import SelectTypes from "./SelectTypes";
 import InputDate from "./InputDate";
 import moment from 'moment'
+import { AsyncStorage } from 'react-native';
 
 const H = Dimensions.get('window').height;
 
@@ -95,6 +96,21 @@ function Add( {screen, navigation, setScreen} ) {
     }
     return true
   }
+  //сохранить отчет в памяти устройства
+  const saveOnDevice = () => {
+    // AsyncStorage.setItem('input', JSON.stringify(input))
+    AsyncStorage.getItem('inputs')
+                .then(data => {
+                  if (data === null) {
+                    return AsyncStorage.setItem('input', JSON.stringify([input]))
+                  } else {
+                    return AsyncStorage.setItem('input', JSON.stringify([...data, input]))
+                  }
+                })
+                .then(() => {
+                  navigation.goBack()
+                })
+  }
 
   //notifications call test
   const testNotification = () => {
@@ -102,13 +118,19 @@ function Add( {screen, navigation, setScreen} ) {
     .then(() => {
     })
   }
+
+
   //итоговое добавление записи
   const addInput = () => {
     // console.log(moment(input.end).diff(input.start, 'days'), 'diffff')
-    // confirmForm() //TODO
+    confirmForm() //TODO
     setNotification(input)
-    .then(id => {
-      console.log(id, 'IDS')
+    .then(ids => {
+      if (Array.isArray(ids)) {
+        console.log('IDS GETED')
+        setInput({...input, id: [...ids]})
+        saveOnDevice()
+      }
     })
     .catch(e => {
       console.log(e)
@@ -139,9 +161,9 @@ function Add( {screen, navigation, setScreen} ) {
         </View>
         <View style={{alignItems: 'center'}}>
           {input.time.sort(( a, b ) => (a !== b) ? (a.H - b.H) : (a.M - b.M)).map(( el, id ) => {
-            return <TouchableOpacity
-              onPress={() => removeTime(id)}
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            return <TouchableOpacity key={id}
+                                     onPress={() => removeTime(id)}
+                                     style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <Text style={{margin: 10}}>
                 {el.H}:{el.M}
               </Text>
