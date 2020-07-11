@@ -127,7 +127,8 @@ function Add( {route, screen, navigation, setScreen} ) {
   //notifications call test
   const testNotification = () => {
     setNotification({test: true})
-    .then(() => {
+    .then(( mass ) => {
+      console.log(mass, 'MASS OUT TEST')
     })
   }
 
@@ -139,12 +140,14 @@ function Add( {route, screen, navigation, setScreen} ) {
       return
     }//TODO
     setNotification(input)
-    .then(ids => {
-      if (Array.isArray(ids)) {
-        console.log('IDS GETED')
-        setInput({...input, id: [...ids]})
-        saveOnDevice()
-      }
+    .then(mass => {
+      // if (Array.isArray(ids)) {
+      let m = Promise.All([Promise.resolve(123)])
+      console.log(m, 'IDS GET RESULT')
+      //   setInput({...input, id: [...mass]})
+      //   saveOnDevice()
+      // }
+      // console.log(ids, 'MASS OUTS REAL')
     })
     .catch(e => {
       console.log(e)

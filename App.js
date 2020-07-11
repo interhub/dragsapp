@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, UIManager, Platform } from 'react-native';
 import { Provider, connect } from "react-redux";
 import store from './src/store/store.js'
@@ -13,6 +13,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Details from "./src/pages/Details/Details";
 import 'moment/locale/ru'
 import moment from 'moment'
+import * as Notifications from "expo-notifications";
 
 moment.locale('ru')
 const Stack = createStackNavigator();
@@ -24,6 +25,8 @@ if (Platform.OS === "android") {
 }
 
 function App( {screen} ) {
+
+
 
   return (
     // <SafeAreaView style={styles.container}>
