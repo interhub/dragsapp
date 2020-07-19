@@ -15,7 +15,7 @@ export default ( {input, onSelectPeriod} ) => {
       value={input.period}
       style={styles.select}
       placeholder={{
-        label: 'Периодичность приема',
+        label: 'Расписание',
         value: null,
         color: '#9EA0A4',
       }}

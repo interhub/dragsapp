@@ -2,5 +2,6 @@ export default {
   EVERYDAY: 'EVERYDAY',
   TWODAY: 'TWODAY',
   THREEDAY: 'THREEDAY',
+  CHECKBOX: 'CHECKBOX',
   NONE: 'NONE'
 }

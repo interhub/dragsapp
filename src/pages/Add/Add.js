@@ -13,8 +13,7 @@ import { Button, Divider, Icon, Input } from "react-native-elements";
 import setNotification from "../../service/notification";
 import PeriodsName from '../../vars/periodsName.js'
 import TimePicker from "react-native-24h-timepicker";
-import { setScreen } from "../../store/actions";
-import { HOME } from "../../store/screenNames";
+import { DETAILS, HOME } from "../../store/screenNames";
 import SelectPeriod from "./SelectPeriod";
 import TypesName from '../../vars/typesName.js'
 import SelectTypes from "./SelectTypes";
@@ -22,10 +21,13 @@ import InputDate from "./InputDate";
 import moment from 'moment'
 import { AsyncStorage } from 'react-native';
 import { StackActions } from '@react-navigation/native';
+import * as Promise from "bluebird";
+import getDaysArray from "../../vars/getDaysArray";
+import DaysCheckbox from "./DaysCheckbox";
 
 const H = Dimensions.get('window').height;
 
-function Add( {route, screen, navigation, setScreen} ) {
+function Add( {route, screen, navigation} ) {
   const edit = route?.params?.edit;
   const picker = useRef()
   //состояние данных ввода
@@ -37,8 +39,11 @@ function Add( {route, screen, navigation, setScreen} ) {
     type: '',//TypesName.TABLET,
     dose: 0,
     start: 0,
-    end: 0
+    end: 0,
+    daysWeek: [1, 3, 5],
+    days: []
   })
+
   useEffect(() => {
     if (edit) {
       setInput(edit)
@@ -46,6 +51,7 @@ function Add( {route, screen, navigation, setScreen} ) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
     }
   }, [])
+
   //изменение имени препарата
   const nameInput = ( txt ) => {
     setInput({...input, name: txt})
@@ -67,6 +73,7 @@ function Add( {route, screen, navigation, setScreen} ) {
   //изменение периода
   const onSelectPeriod = ( period ) => {
     if (period) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
       setInput({...input, period})
     }
   }
@@ -84,13 +91,26 @@ function Add( {route, screen, navigation, setScreen} ) {
   }
   //изменнение начала или конца курса с фильтром
   const startEnd = ( param, date ) => {
-    console.log(date, 'date in')
     if (param in input && typeof date == 'number' && date) {
       setInput({...input, [param]: date})
     } else {
       setInput({...input, [param]: 0})
     }
   }
+  //добавление или удаления дня недели
+  const changeCheckbox = ( num ) => {
+    let daysWeek = [...input.daysWeek];
+    daysWeek.includes(num) ?
+      daysWeek.splice(daysWeek.findIndex(( find ) => find === num), 1) :
+      daysWeek.push(num)
+    setInput({...input, daysWeek})
+  }
+
+  //установка нового значения days на основе нового набора данных ввода
+  useEffect(() => {
+    input.days = getDaysArray({...input})
+  }, [input])
+
   //проверка полей ввода на пустоту
   const confirmForm = () => {
     if (
@@ -107,10 +127,8 @@ function Add( {route, screen, navigation, setScreen} ) {
   }
   //сохранить отчет в памяти устройства
   const saveOnDevice = () => {
-    // AsyncStorage.setItem('input', JSON.stringify(input))
     AsyncStorage.getItem('input')
                 .then(data => {
-                  console.log('old data', data)
                   if (data === null) {
                     return AsyncStorage.setItem('input', JSON.stringify([{...input}]))
                   } else {
@@ -120,7 +138,9 @@ function Add( {route, screen, navigation, setScreen} ) {
                 .then(() => {
                   // navigation.goBack()
                   navigation.dispatch(StackActions.popToTop());
-
+                  setTimeout(() => {
+                    navigation.jumpTo(DETAILS)
+                  }, 100)
                 })
   }
 
@@ -138,16 +158,16 @@ function Add( {route, screen, navigation, setScreen} ) {
     // console.log(moment(input.end).diff(input.start, 'days'), 'diffff')
     if (!confirmForm()) {
       return
-    }//TODO
-    setNotification(input)
+    }
+    setNotification({...input})
     .then(mass => {
-      // if (Array.isArray(ids)) {
-      let m = Promise.All([Promise.resolve(123)])
-      console.log(m, 'IDS GET RESULT')
-      //   setInput({...input, id: [...mass]})
-      //   saveOnDevice()
-      // }
-      // console.log(ids, 'MASS OUTS REAL')
+      if (Array.isArray(mass)) {
+        Promise.all(mass)
+               .then(( els ) => {
+                 setInput({...input, id: [...els]})
+                 saveOnDevice()
+               })
+      }
     })
     .catch(e => {
       console.log(e)
@@ -158,24 +178,29 @@ function Add( {route, screen, navigation, setScreen} ) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={{alignItems: 'center'}}>
-          <Button title={'Тестировать уведомление'} onPress={() => testNotification()}
-                  containerStyle={styles.btn}/>
-          <Button title={'Назад'} onPress={() => {
-            setScreen(HOME)
-            navigation.goBack()
-          }} containerStyle={styles.btn}/>
-        </View>
+        {/*<View style={{alignItems: 'center'}}>*/}
+        {/*  <Button title={'Тестировать уведомление'} onPress={() => testNotification()}*/}
+        {/*          containerStyle={styles.btn}/>*/}
+        {/*  <Button title={'Назад'} onPress={() => {*/}
+        {/*    navigation.goBack()*/}
+        {/*  }} containerStyle={styles.btn}/>*/}
+        {/*</View>*/}
         <Input
+          inputStyle={styles.inName}
           value={input.name}
           onChangeText={nameInput}
-          placeholder='Название препарата'
-          leftIcon={{type: 'font-awesome', name: 'user', color: '#FFC56D'}}
+          placeholder={'Название лекарства'}
         />
+        {/*SELECT PERIOD-----------------------------------------------*/}
         <View style={styles.boxSelect}>
           <SelectPeriod input={input} onSelectPeriod={onSelectPeriod}/>
-          <Divider style={{margin: 15}}/>
         </View>
+        {/*PERIOD CHECKBOXES WEEK-----------------------------------------------*/}
+        {input.period === PeriodsName.CHECKBOX &&
+        <View style={{borderBottomWidth: 0.5}}>
+          <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
+        </View>}
+        {/*LIST TIMES-----------------------------------------------*/}
         <View style={{alignItems: 'center'}}>
           {input.time.sort(( a, b ) => (a !== b) ? (a.H - b.H) : (a.M - b.M)).map(( el, id ) => {
             return <TouchableOpacity key={id}
@@ -190,7 +215,7 @@ function Add( {route, screen, navigation, setScreen} ) {
             </TouchableOpacity>
           })}
         </View>
-
+        {/*BUTTON TIMES-----------------------------------------------*/}
         <TouchableOpacity
           // activeOpacity={.9}
           style={{alignItems: 'center',}}
@@ -202,7 +227,7 @@ function Add( {route, screen, navigation, setScreen} ) {
             <Text style={{fontSize: 15}}>Добавить</Text>
           </View>
         </TouchableOpacity>
-        {/*<Button title={'Открыть ввод'} onPress={() => picker.current.open()} containerStyle={styles.btn}/>*/}
+        {/*TIME SELECTOR DOWN SLIDER-----------------------------------------------*/}
         <TimePicker
           minuteInterval={5}
           textCancel={"Назад"}
@@ -215,10 +240,12 @@ function Add( {route, screen, navigation, setScreen} ) {
           }
           }
         />
+        {/*TIME TYPE AND DOSE SELECTORS-----------------------------------------------*/}
         <SelectTypes onSelectType={onSelectType} onSelectDose={onSelectDose} input={input}/>
+        {/*DATE PICKERS-----------------------------------------------*/}
         <InputDate input={input} startEnd={startEnd}/>
+        {/*ADD BTN-----------------------------------------------*/}
         <View>
-          {/*<Dimensions/>*/}
           <Button
             onPress={addInput}
             buttonStyle={{height: 60}}
@@ -235,32 +262,35 @@ const mapStateToProps = ( state ) => ({
   screen: state.screen
 })
 
-const mapDispatchToProps = {
-  setScreen
-}
+const mapDispatchToProps = {}
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Add)
 
 const styles = StyleSheet.create({
   container: {
+    padding: 10,
     flex: 1,
     minHeight: H,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
-  btn: {
-    width: '90%',
-    margin: 10
+  inName: {
+    width: '100%',
+    margin: 0,
+    padding: 0
   },
   btnBox: {width: 300},
   btnContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: 355,
+    width: '100%',
     height: 80,
-    borderTopWidth: 1,
+    // borderTopWidth: 0.5,
     borderBottomWidth: 1
   },
-  boxSelect: {},
+  boxSelect: {
+    borderBottomWidth: 0.5,
+    marginBottom: 30
+  },
 });

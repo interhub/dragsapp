@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, UIManager, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, View, UIManager, Platform, Modal, AsyncStorage } from 'react-native';
 import { Provider, connect } from "react-redux";
 import store from './src/store/store.js'
 import Home from "./src/pages/Home/Home.js";
 import Add from "./src/pages/Add/Add.js";
-import { HOME, ADD, DETAILS } from "./src/store/screenNames";
+import { HOME, ADD, DETAILS, GEO } from "./src/store/screenNames";
 //navigate
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,8 +13,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Details from "./src/pages/Details/Details";
 import 'moment/locale/ru'
 import moment from 'moment'
-import * as Notifications from "expo-notifications";
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Geo from "./src/pages/Geo/Geo";
+import { Entypo } from '@expo/vector-icons';
+import { setName } from "./src/store/actions";
+import Modals from "./src/comps/Modals";
+import { Button, TextInput } from "react-native-paper";
+import StartForm from "./src/comps/StartForm";
 
+const Tab = createMaterialBottomTabNavigator()
 moment.locale('ru')
 const Stack = createStackNavigator();
 
@@ -24,29 +32,90 @@ if (Platform.OS === "android") {
   }
 }
 
-function App( {screen} ) {
 
+function App( {theme, name} ) {
 
+  const getTitleStyle = ( name ) => ({
+    title: name,
+    headerStyle: {
+      backgroundColor: theme.topBg,
+    },
+    headerTitleStyle: {
+      fontWeight: 'bold',
+      color: theme.titleItem
+    },
+    headerTintColor: theme.titleItem,
+  })
 
-  return (
-    // <SafeAreaView style={styles.container}>
-    <NavigationContainer>
+  function One() {
+    return (
       <Stack.Navigator initialRouteName={HOME}>
-        <Stack.Screen options={{title: 'Главная'}} name={HOME} component={Home}/>
-        <Stack.Screen options={{title: 'Добавление'}} name={ADD} component={Add}/>
-        <Stack.Screen options={{title: 'Просмотр'}} name={DETAILS} component={Details}/>
+        <Stack.Screen  options={getTitleStyle(name === '' ? 'Напоминиания' : name)} name={HOME} component={Home}/>
+        <Stack.Screen options={getTitleStyle('Новое напоминание')} name={ADD} component={Add}/>
       </Stack.Navigator>
+    );
+  }
+
+  function Two() {
+    return <Stack.Navigator initialRouteName={DETAILS}>
+      <Stack.Screen options={getTitleStyle('Просмотр')} name={DETAILS}
+                    component={Details}/>
+    </Stack.Navigator>
+  }
+
+
+  function Three() {
+    return <Stack.Navigator initialRouteName={GEO}>
+      <Stack.Screen options={getTitleStyle('Просмотр')} name={GEO} component={Geo}/>
+    </Stack.Navigator>
+  }
+
+  return <NavigationContainer>
+    <StartForm  />
+    <SafeAreaView style={{flex: 1}}>
       <StatusBar style="auto"/>
-    </NavigationContainer>
-    // </SafeAreaView>
-  );
+      <Tab.Navigator
+        activeColor={theme.navIcon}
+        barStyle={{backgroundColor: theme.navBg}}
+        backBehavior={'history'}
+        initialRouteName={HOME}>
+        <Tab.Screen options={{
+          title: 'Главная',
+          tabBarLabel: 'Главная',
+          tabBarIcon: ( {color} ) => (
+            <Entypo name="home" size={24} color={color}/>
+          ),
+        }} name={HOME} component={One}/>
+        <Tab.Screen options={{
+          title: 'Все напомининия',
+          tabBarLabel: 'Все напомининия',
+          tabBarIcon: ( {color} ) => (
+            <Entypo name="back-in-time" size={24} color={color}/>
+
+          ),
+        }} name={DETAILS} component={Two}/>
+        <Tab.Screen options={{
+          title: 'Геонапоминания',
+          tabBarLabel: 'Геонапоминания',
+          tabBarIcon: ( {color} ) => (
+            <Entypo name="location-pin" size={24} color={color}/>
+          ),
+        }} name={GEO} component={Three}/>
+      </Tab.Navigator>
+    </SafeAreaView>
+  </NavigationContainer>
 }
 
-const mapStateToProps = ( state ) => ({
-  screen: state.screen
-})
 
-const ConnectApp = connect(mapStateToProps)(App)
+const mapStateToProps = ( state ) => ({
+  name: state.name,
+  theme: state.theme
+})
+const mapDispatchToProps = {
+  setName
+}
+
+const ConnectApp = connect(mapStateToProps, mapDispatchToProps)(App)
 
 const ProviderApp = () => {
   return <Provider store={store}>

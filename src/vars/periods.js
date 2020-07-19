@@ -14,7 +14,12 @@ export default [
     label: "Каждые три дня",
   },
   {
+    value: PeriodsName.CHECKBOX,
+    label: "Определённые дни",
+  },
+  {
     value: PeriodsName.NONE,
     label: "Не имеет значения",
-  }
+  },
+
 ]

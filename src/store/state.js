@@ -1,5 +1,7 @@
-import { HOME } from "./screenNames";
+import { LightTheme, DarkTheme } from "./ColorThemes";
 
 export default {
-  screen: HOME,
+  name: '',
+  theme: {...LightTheme},
+  openSetting: false
 };

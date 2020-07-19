@@ -1,8 +1,22 @@
-import {  SET_SCREEN} from "./actionNames"
+import { SET_NAME, SET_SETTING, SET_THEME } from "./actionNames"
 
-export const setScreen = (screen) => {
+export const setName = (name) => {
     return {
-        type: SET_SCREEN,
-        screen: screen
+        type: SET_NAME,
+        name
+    }
+}
+
+export const setTheme = (theme) => {
+    return {
+        type: SET_THEME,
+        theme
+    }
+}
+
+export const setOpenSetting = (openSetting) => {
+    return {
+        type: SET_SETTING,
+        openSetting
     }
 }

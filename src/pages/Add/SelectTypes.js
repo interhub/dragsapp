@@ -24,7 +24,7 @@ export default ( {input, onSelectType, onSelectDose} ) => {
         // value={input.type}
         style={styles.select}
         placeholder={{
-          label: 'Единица',
+          label: 'Ед. измерения',
           value: null,
           color: '#7a7a7a',
         }}
@@ -41,7 +41,7 @@ export default ( {input, onSelectType, onSelectDose} ) => {
         // value={input.dose}
         style={styles.select}
         placeholder={{
-          label: 'Дозировка',
+          label: 'Количество',
           value: null,
           color: '#7a7a7a',
         }}

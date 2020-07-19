@@ -1,40 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import {
+  AsyncStorage,
   Dimensions,
+  LayoutAnimation,
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  AsyncStorage,
   TouchableOpacity,
-  LayoutAnimation
+  View
 } from 'react-native';
 import { connect } from "react-redux";
-import { Button } from "react-native-elements";
-import { ListItem } from 'react-native-elements'
+import { ListItem } from "react-native-elements";
 import Types from "../../vars/types";
-import TypesName from '../../vars/typesName.js'
 import * as Notifications from 'expo-notifications';
-import { ADD } from "../../store/screenNames";
-import { setScreen } from "../../store/actions";
+import { ADD, HOME } from "../../store/screenNames";
 
 const H = Dimensions.get('window').height;
 const W = Dimensions.get('window').width;
 
-function Details( {screen, navigation, setScreen} ) {
+function Details( {navigation} ) {
   const [list, setList] = useState([])
+
   useEffect(() => {
-    console.log('DOM')
-    AsyncStorage.getItem('input')
-                .then(( data ) => {
-                  if (data !== null) {
-                    setList(JSON.parse(data))
-                  }
-                })
-  }, [])
+    return navigation.addListener('focus', () => {
+      AsyncStorage.getItem('input')
+                  .then(( data ) => {
+                    if (data !== null) {
+                      setList(JSON.parse(data))
+                      console.log('PRINT')
+                    }
+                  })
+    });
+  }, []);
 
   const editInput = ( el, id ) => {
-    navigation.push(ADD, {edit: el})
+    navigation.jumpTo(HOME,{callback:()=>alert('hi')});
+    setTimeout(()=>{
+      navigation.push(ADD, {edit: el})
+    },300)
   }
 
   const removeInput = ( el, id ) => {
@@ -83,7 +86,6 @@ function Details( {screen, navigation, setScreen} ) {
             />
           })}
         </View>
-        <Button title={'Назад'} onPress={() => navigation.goBack()}/>
       </View>
     </ScrollView>
   );
@@ -93,7 +95,7 @@ const mapStateToProps = ( state ) => ({
   screen: state.screen
 })
 const mapDispatchToProps = {
-  setScreen
+
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Details)
