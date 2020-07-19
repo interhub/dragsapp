@@ -10,7 +10,7 @@ import PeriodsName from '../../vars/periodsName.js'
 const H = Dimensions.get('window').height;
 
 export default ( {input, onSelectPeriod} ) => {
-  return <View>
+  return <View style={{marginHorizontal: 4}}>
     <RNPickerSelect
       value={input.period}
       style={styles.select}
@@ -27,12 +27,12 @@ export default ( {input, onSelectPeriod} ) => {
 
 const styles = StyleSheet.create({
   select: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 8,
+    margin:-20,
+    // paddingVertical: 8,
+    // borderRadius: 8,
     color: 'black',
-    borderBottomWidth: 1,
-    paddingRight: 30,
-  }
+    // borderBottomWidth: 1,
+    // paddingRight: 30,
+  },
+
 });

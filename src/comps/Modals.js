@@ -3,6 +3,7 @@ import React from 'react';
 
 const Modals = ( {children, open} ) => {
   return <Modal
+    contentContainerStyle={{backgroundColor: 'red', opacity:0.5}}
     animationType="slide"
     transparent={true}
     visible={open}

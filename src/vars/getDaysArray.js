@@ -46,7 +46,7 @@ const getDaysArray = (
   //counter
   let i = difToStart
 
-  console.log('PARAMS', 'difToStart=', difToStart, 'realMax=', realMax, 'currentPeriod=', currentPeriod)
+  // console.log('PARAMS', 'difToStart=', difToStart, 'realMax=', realMax, 'currentPeriod=', currentPeriod)
   //если дни недели
   if (period === PeriodName.CHECKBOX) {
     for (; i < realMax; i++) {

@@ -33,7 +33,7 @@ if (Platform.OS === "android") {
 }
 
 
-function App( {theme, name} ) {
+function App( {theme, name, openSetting} ) {
 
   const getTitleStyle = ( name ) => ({
     title: name,
@@ -50,7 +50,7 @@ function App( {theme, name} ) {
   function One() {
     return (
       <Stack.Navigator initialRouteName={HOME}>
-        <Stack.Screen  options={getTitleStyle(name === '' ? 'Напоминиания' : name)} name={HOME} component={Home}/>
+        <Stack.Screen options={getTitleStyle(name === '' ? 'Напоминиания' : name)} name={HOME} component={Home}/>
         <Stack.Screen options={getTitleStyle('Новое напоминание')} name={ADD} component={Add}/>
       </Stack.Navigator>
     );
@@ -71,8 +71,8 @@ function App( {theme, name} ) {
   }
 
   return <NavigationContainer>
-    <StartForm  />
-    <SafeAreaView style={{flex: 1}}>
+    <StartForm/>
+    <SafeAreaView style={{flex: 1, opacity: openSetting ? 0.8 : 1}}>
       <StatusBar style="auto"/>
       <Tab.Navigator
         activeColor={theme.navIcon}
@@ -109,7 +109,8 @@ function App( {theme, name} ) {
 
 const mapStateToProps = ( state ) => ({
   name: state.name,
-  theme: state.theme
+  theme: state.theme,
+  openSetting: state.openSetting
 })
 const mapDispatchToProps = {
   setName
