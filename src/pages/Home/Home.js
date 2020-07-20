@@ -7,6 +7,7 @@ import moment from 'moment'
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { setOpenSetting } from "../../store/actions";
 import { NavigationContainer } from "@react-navigation/native";
+import CalendarBanner from "./CalendarBanner";
 
 const H = Dimensions.get('screen').height
 
@@ -36,6 +37,8 @@ function Home( {theme, navigation, setOpenSetting} ) {
     <View style={{flex: 1, flexDirection: 'row'}}>
       <ImageBackground source={require('../../img/empty-bg.png')} style={[styles.imageBox, {backgroundColor: theme.bg}]}
                        imageStyle={styles.image}>
+
+
         {/*<View style={styles.container}>*/}
         {/*<Text>{now}</Text>*/}
         {/*<Button*/}

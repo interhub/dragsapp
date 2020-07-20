@@ -10,15 +10,19 @@ import {
   View
 } from 'react-native';
 import { connect } from "react-redux";
-import { ListItem } from "react-native-elements";
 import Types from "../../vars/types";
 import * as Notifications from 'expo-notifications';
 import { ADD, HOME } from "../../store/screenNames";
+import { Divider, List, TouchableRipple } from "react-native-paper";
+import { SwipeListView } from "react-native-swipe-list-view";
+import ListMoveItem from "../Add/ListMoveItem";
+import { FontAwesome } from "@expo/vector-icons";
+import ListItem from "./ListItem";
 
-const H = Dimensions.get('window').height;
-const W = Dimensions.get('window').width;
+const H = Dimensions.get('screen').height;
+const W = Dimensions.get('screen').width;
 
-function Details( {navigation} ) {
+function Details( {navigation, theme} ) {
   const [list, setList] = useState([])
 
   useEffect(() => {
@@ -26,21 +30,26 @@ function Details( {navigation} ) {
       AsyncStorage.getItem('input')
                   .then(( data ) => {
                     if (data !== null) {
-                      setList(JSON.parse(data))
-                      console.log('PRINT')
+                      let result = (JSON.parse(data)).map(( el, key ) => {
+                        el['key'] = key
+                        return el
+                      });
+                      setList(result)
+                      // console.log(result, 'PRINT')
                     }
                   })
     });
   }, []);
 
-  const editInput = ( el, id ) => {
-    navigation.jumpTo(HOME,{callback:()=>alert('hi')});
-    setTimeout(()=>{
+  const editInput = ( el ) => {
+    el.id = []
+    navigation.jumpTo(HOME, {callback: () => alert('hi')});
+    setTimeout(() => {
       navigation.push(ADD, {edit: el})
-    },300)
+    }, 300)
   }
 
-  const removeInput = ( el, id ) => {
+  const removeInput = ( el, key ) => {
     LayoutAnimation.configureNext({
       duration: 700,
       create: {type: 'linear', property: 'opacity'},
@@ -48,55 +57,92 @@ function Details( {navigation} ) {
       delete: {type: 'linear', property: 'scaleXY'}
     })
     let items = [...list];
-    items.splice(id, 1);
-    setList(items);
-    el.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
+    let item = items.find(el => el.key === key)
+    setList(items.filter(el => el.key !== key));
+    item.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
     AsyncStorage.setItem('input', JSON.stringify(items));
   }
 
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text>Просмотр всех записей</Text>
-        <View style={{width: W, margin: 5}}>
-          {list && list.map(( el, id ) => {
-            return <ListItem
-              key={id}
-              rightAvatar={
-                <View
-                  style={{padding: 5, flexDirection: 'row', alignItems: 'center'}}>
-                  <TouchableOpacity
-                    onPress={() => editInput(el, id)}
-                    style={{padding: 5}}>
-                    <Text>Редактировать</Text>
-                  </TouchableOpacity>
-                  <View style={{width: 1, height: 20, backgroundColor: 'gray'}}/>
-                  <TouchableOpacity
-                    onPress={() => removeInput(el, id)}
-                    style={{padding: 5}}>
-                    <Text>Удалить</Text>
-                  </TouchableOpacity>
-                </View>}
-              title={el.name}
-              subtitle={
-                `${el.name} в количестве ${el.dose} ${Types.find(obj => obj.value === el.type).label}
-Время приема: ${el.time.map(( t ) => `${t.H}:${t.M}`).join(', ')}`}
-              bottomDivider
-              topDivider
-            />
-          })}
-        </View>
+        {/*<Text>Просмотр всех записей</Text>*/}
+        {/*        <View style={{width: W, margin: 5}}>*/}
+        {/*          {list && list.map(( el, id ) => {*/}
+        {/*            return <ListItem*/}
+        {/*              key={id}*/}
+        {/*              rightAvatar={*/}
+        {/*                <View*/}
+        {/*                  style={{padding: 5, flexDirection: 'row', alignItems: 'center'}}>*/}
+        {/*                  <TouchableOpacity*/}
+        {/*                    onPress={() => editInput(el, id)}*/}
+        {/*                    style={{padding: 5}}>*/}
+        {/*                    <Text>Редактировать</Text>*/}
+        {/*                  </TouchableOpacity>*/}
+        {/*                  <View style={{width: 1, height: 20, backgroundColor: 'gray'}}/>*/}
+        {/*                  <TouchableOpacity*/}
+        {/*                    onPress={() => removeInput(el, id)}*/}
+        {/*                    style={{padding: 5}}>*/}
+        {/*                    <Text>Удалить</Text>*/}
+        {/*                  </TouchableOpacity>*/}
+        {/*                </View>}*/}
+        {/*              title={el.name}*/}
+        {/*              subtitle={*/}
+        {/*                `${el.name} в количестве ${el.dose} ${Types.find(obj => obj.value === el.type).label}*/}
+        {/*Время приема: ${el.time.map(( t ) => `${t.H}:${t.M}`).join(', ')}`}*/}
+        {/*              bottomDivider*/}
+        {/*              topDivider*/}
+        {/*            />*/}
+        {/*          })}*/}
+        {/*        </View>*/}
+
+        <List.Section>
+          <List.Subheader>Просмотр всех записей</List.Subheader>
+          <Divider/>
+          {list.length > 0 && <SwipeListView
+            useNativeDriver={false}
+            data={list}
+            disableRightSwipe
+            renderItem={( {item} ) => (
+              <ListItem theme={theme}
+                        key={item.key}
+                        item={item}
+                        editInput={() => editInput(item)}
+              />
+            )}
+            renderHiddenItem={( data, rowMap ) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  height: '100%',
+                  // backgroundColor: 'red'
+                  // position: 'absolute',
+                  // right: -100,
+                  // top: 5
+                }}>
+                <TouchableRipple
+                  style={{padding: 30}}
+                  onPress={() => removeInput(data.item, data.item.key)}>
+                  <FontAwesome name="trash-o" size={24} color="red"/>
+                </TouchableRipple>
+              </View>
+            )}
+            leftOpenValue={75}
+            rightOpenValue={-75}
+          />}
+        </List.Section>
       </View>
     </ScrollView>
   );
 }
 
 const mapStateToProps = ( state ) => ({
-  screen: state.screen
+  screen: state.screen,
+  theme: state.theme
 })
-const mapDispatchToProps = {
-
-}
+const mapDispatchToProps = {}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Details)
 
@@ -105,8 +151,6 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: H,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   btn: {
     width: '100%'
