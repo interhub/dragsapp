@@ -66,36 +66,6 @@ function Details( {navigation, theme} ) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        {/*<Text>Просмотр всех записей</Text>*/}
-        {/*        <View style={{width: W, margin: 5}}>*/}
-        {/*          {list && list.map(( el, id ) => {*/}
-        {/*            return <ListItem*/}
-        {/*              key={id}*/}
-        {/*              rightAvatar={*/}
-        {/*                <View*/}
-        {/*                  style={{padding: 5, flexDirection: 'row', alignItems: 'center'}}>*/}
-        {/*                  <TouchableOpacity*/}
-        {/*                    onPress={() => editInput(el, id)}*/}
-        {/*                    style={{padding: 5}}>*/}
-        {/*                    <Text>Редактировать</Text>*/}
-        {/*                  </TouchableOpacity>*/}
-        {/*                  <View style={{width: 1, height: 20, backgroundColor: 'gray'}}/>*/}
-        {/*                  <TouchableOpacity*/}
-        {/*                    onPress={() => removeInput(el, id)}*/}
-        {/*                    style={{padding: 5}}>*/}
-        {/*                    <Text>Удалить</Text>*/}
-        {/*                  </TouchableOpacity>*/}
-        {/*                </View>}*/}
-        {/*              title={el.name}*/}
-        {/*              subtitle={*/}
-        {/*                `${el.name} в количестве ${el.dose} ${Types.find(obj => obj.value === el.type).label}*/}
-        {/*Время приема: ${el.time.map(( t ) => `${t.H}:${t.M}`).join(', ')}`}*/}
-        {/*              bottomDivider*/}
-        {/*              topDivider*/}
-        {/*            />*/}
-        {/*          })}*/}
-        {/*        </View>*/}
-
         <List.Section>
           <List.Subheader>Просмотр всех записей</List.Subheader>
           <Divider/>

@@ -4,7 +4,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import weekDays from "../../vars/weekDays";
 import TouchableRipple from "react-native-paper/src/components/TouchableRipple/index";
 
-const CalendarBanner = ( {theme, activeDay , setActiveDay} ) => {
+const CalendarBanner = ( {theme, activeDay, setActiveDay} ) => {
 
   const [arrayDate, setArrayDate] = useState([])
 
@@ -13,7 +13,6 @@ const CalendarBanner = ( {theme, activeDay , setActiveDay} ) => {
     let backDay = new Date(now).setDate(new Date(now).getDate() - 1)
     let next = Array(5).fill(1).map(( _, i ) => new Date(now).setDate(new Date(now).getDate() + 1 + i))
     setArrayDate([backDay, now, ...next])
-    console.log([backDay, now, ...next].map(el => new Date(el).toLocaleString()))
   }, [])
 
 
