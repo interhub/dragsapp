@@ -4,10 +4,9 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import weekDays from "../../vars/weekDays";
 import TouchableRipple from "react-native-paper/src/components/TouchableRipple/index";
 
-const CalendarBanner = ( {theme} ) => {
+const CalendarBanner = ( {theme, activeDay , setActiveDay} ) => {
 
   const [arrayDate, setArrayDate] = useState([])
-  const [activeDay, setActiveDay] = useState(Date.now())
 
   useEffect(() => {
     let now = Date.now()

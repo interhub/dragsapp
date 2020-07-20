@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, ImageBackground, LayoutAnimation, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { connect } from "react-redux";
 import { Button } from "react-native-paper";
@@ -12,6 +12,8 @@ import CalendarBanner from "./CalendarBanner";
 const H = Dimensions.get('screen').height
 
 function Home( {theme, navigation, setOpenSetting} ) {
+
+  const [activeDay, setActiveDay] = useState(Date.now())
 
   useEffect(() => {
     navigation.setOptions({
@@ -38,7 +40,7 @@ function Home( {theme, navigation, setOpenSetting} ) {
       <ImageBackground source={require('../../img/empty-bg.png')}
                        style={[styles.imageBox, {backgroundColor: theme.bg}]}
                        imageStyle={styles.image}>
-        <CalendarBanner theme={theme}/>
+        <CalendarBanner activeDay={activeDay} setActiveDay={setActiveDay} theme={theme}/>
 
         <Button color={theme.navBg}
                 contentStyle={{height: '100%'}}
