@@ -35,20 +35,11 @@ function Home( {theme, navigation, setOpenSetting} ) {
   const now = moment().format('DD - MMMM, hh:mm');
   return (
     <View style={{flex: 1, flexDirection: 'row'}}>
-      <ImageBackground source={require('../../img/empty-bg.png')} style={[styles.imageBox, {backgroundColor: theme.bg}]}
+      <ImageBackground source={require('../../img/empty-bg.png')}
+                       style={[styles.imageBox, {backgroundColor: theme.bg}]}
                        imageStyle={styles.image}>
+        <CalendarBanner theme={theme}/>
 
-
-        {/*<View style={styles.container}>*/}
-        {/*<Text>{now}</Text>*/}
-        {/*<Button*/}
-        {/*  containerStyle={styles.btn}*/}
-        {/*  title="Добавить новую заметку"*/}
-        {/*  onPress={() => {*/}
-        {/*    // navigation.navigate(ADD)*/}
-        {/*    navigation.push(ADD)*/}
-        {/*  }}*/}
-        {/*/>*/}
         <Button color={theme.navBg}
                 contentStyle={{height: '100%'}}
                 icon={() => <Entypo name="plus" size={24} color="#fff"/>}
@@ -57,20 +48,6 @@ function Home( {theme, navigation, setOpenSetting} ) {
                 onPress={() => navigation.push(ADD)}>
           Новое напоминание
         </Button>
-        {/*TODO perebros*/}
-        {/*<View*/}
-        {/*  style={{marginTop: 5, ...styles.btnBox}}*/}
-        {/*>*/}
-        {/*  <Button*/}
-        {/*    containerStyle={styles.btn}*/}
-        {/*    title="Открыть все записи"*/}
-        {/*    onPress={() => {*/}
-        {/*      // navigation.push(DETAILS)*/}
-        {/*      navigation.jumpTo(DETAILS);*/}
-        {/*    }}*/}
-        {/*  />*/}
-        {/*</View>*/}
-        {/*</View>*/}
       </ImageBackground>
     </View>
   );
@@ -95,7 +72,7 @@ const styles = StyleSheet.create({
   imageBox: {
     flex: 1,
     resizeMode: "contain",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: 'center',
   },
   image: {
@@ -105,6 +82,6 @@ const styles = StyleSheet.create({
   btnAdd: {
     height: 60,
     justifyContent: 'center',
-    marginBottom: -H * 0.5
+    marginBottom: H * 0.1
   }
 });
