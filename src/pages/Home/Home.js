@@ -100,7 +100,7 @@ function Home( {theme, navigation, setOpenSetting} ) {
         <ScrollView showsVerticalScrollIndicator={false} style={{height: H, width: '100%'}}>
           <View>
             <List.Section>
-              {list.length > 0 && <SwipeListView
+              { list &&  list.length > 0 && <SwipeListView
                 useNativeDriver={false}
                 data={list}
                 disableRightSwipe
@@ -129,7 +129,7 @@ function Home( {theme, navigation, setOpenSetting} ) {
                 leftOpenValue={75}
                 rightOpenValue={-75}
               />}
-              {list.length === 0 &&
+              {list && list.length === 0 &&
               <Text style={{textAlign: 'center'}}>Сегодня ничего принимать не нужно</Text>}
             </List.Section>
           </View>

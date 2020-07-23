@@ -59,7 +59,7 @@ function Details( {navigation, theme} ) {
     let items = [...list];
     let item = items.find(el => el.key === key)
     setList(items.filter(el => el.key !== key));
-    item.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
+    item.id.forEach(str => Notifications.cancelScheduledNotificationAsync(str));
     AsyncStorage.setItem('input', JSON.stringify(items));
   }
 
