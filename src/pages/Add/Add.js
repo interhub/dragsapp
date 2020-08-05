@@ -15,7 +15,6 @@ import DaysCheckbox from "./DaysCheckbox";
 import TimePanel from "./TimePanel";
 import Message from "../../comps/Message";
 
-
 const H = Dimensions.get('screen').height;
 
 const initialInput = {
@@ -96,7 +95,10 @@ function Add({route, screen, navigation, theme}) {
     const onSelectDose = (dose) => {
         if (dose) {
             setInput({...input, dose})
+        } else {
+            setInput({...input, dose: 0})
         }
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
     }
     //изменнение начала или конца курса с фильтром
     const startEnd = (param, date) => {
@@ -256,7 +258,7 @@ const styles = StyleSheet.create({
         minHeight: H / 2,
         backgroundColor: '#fff',
         // flexDirection: 'column',
-        justifyContent: 'space-around'
+        justifyContent: 'center'
     },
     inName: {
         margin: 0,

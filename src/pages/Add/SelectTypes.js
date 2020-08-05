@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {Dimensions, StyleSheet, TextInput, View} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import Types from '../../vars/types.js'
 import {HelperText} from "react-native-paper";
@@ -8,10 +8,11 @@ import {HelperText} from "react-native-paper";
 const H = Dimensions.get('window').height;
 const W = Dimensions.get('window').width;
 
-const numbers = new Array(100).fill(1).map((el, id) => ({
-    label: `${id}`,
-    value: id
-}))
+
+// const getNumber = (num) => ({
+//     label: `${num}`,
+//     value: num
+// })
 
 export default ({input, onSelectType, onSelectDose}) => {
     return <View style={styles.container}>
@@ -38,16 +39,13 @@ export default ({input, onSelectType, onSelectDose}) => {
             {input.dose !== 0 && <HelperText type={'info'} visible={'hello'}>
                 Количество
             </HelperText>}
-            <RNPickerSelect
+            <TextInput
+                keyboardType={'number-pad'}
                 // value={input.dose}
-                style={styles.select}
-                placeholder={{
-                    label: 'Количество',
-                    value: null,
-                    color: '#7a7a7a',
-                }}
-                onValueChange={onSelectDose}
-                items={numbers}
+                style={{height: 50}}
+                placeholder={'Количество'}
+                onChangeText={onSelectDose}
+                // items={numbers}
             />
         </View>
     </View>

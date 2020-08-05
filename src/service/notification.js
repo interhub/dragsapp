@@ -17,9 +17,9 @@ const setNotification = async ({
                                    type = 'расписание',
                                    time = [{
                                        H: new Date().getHours(),
-                                       M: new Date().getMinutes(),
+                                       M: new Date().getMinutes() + 30,
                                    }],
-                                   days = []
+                                   days = [new Date()]
                                }) => {
     // return console.log(days.map(( el, id ) => new Date(el).toLocaleString()), "TEST DATES ALL")
     // return AsyncStorage.clear()
@@ -42,6 +42,7 @@ const setNotification = async ({
                     title,
                     body,
                     vibrate: true,
+                    priority: 'max'
                 },
                 trigger: new Date(new Date(new Date(day.setHours(t.H)).setMinutes(t.M)).setSeconds(0))
             });
