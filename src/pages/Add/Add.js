@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {AsyncStorage, Dimensions, LayoutAnimation, ScrollView, StyleSheet, View} from 'react-native';
-import {Divider} from 'react-native-paper';
+import {Divider, HelperText} from 'react-native-paper';
 import {connect} from "react-redux";
 import {Button, Input} from "react-native-elements";
 import setNotification from "../../service/notification";
@@ -14,6 +14,7 @@ import getDaysArray from "../../vars/getDaysArray";
 import DaysCheckbox from "./DaysCheckbox";
 import TimePanel from "./TimePanel";
 import Message from "../../comps/Message";
+
 
 const H = Dimensions.get('screen').height;
 
@@ -186,16 +187,26 @@ function Add({route, screen, navigation, theme}) {
     const step3 = step2 && input.type !== '' && input.dose !== 0;
 
     return (
-        <ScrollView style={{backgroundColor: '#fff'}} >
+        <ScrollView style={{backgroundColor: '#fff'}}>
             <View style={styles.container}>
-                <Input
-                    inputStyle={styles.inName}
-                    value={input.name}
-                    onChangeText={nameInput}
-                    placeholder={'Название лекарства'}
-                />
+                <View>
+                    {step1 && <HelperText type={'info'} visible={'hello'}>
+                        Название лекарства
+                    </HelperText>}
+                    <Input
+                        inputStyle={styles.inName}
+                        value={input.name}
+                        onChangeText={nameInput}
+                        placeholder={'Название лекарства'}
+                    />
+                </View>
+
+                {/*<TextField/>*/}
                 {/*SELECT PERIOD-----------------------------------------------*/}
                 {step1 && <View style={styles.boxSelect}>
+                    {step2 && <HelperText type={'info'} visible={'hello'}>
+                        Расписание
+                    </HelperText>}
                     <SelectPeriod input={input} onSelectPeriod={onSelectPeriod}/>
                 </View>}
                 {/*PERIOD CHECKBOXES WEEK-----------------------------------------------*/}
@@ -240,6 +251,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Add)
 const styles = StyleSheet.create({
     container: {
         padding: 10,
+        paddingTop: 50,
         flex: 1,
         minHeight: H / 2,
         backgroundColor: '#fff',
