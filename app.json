@@ -4,7 +4,7 @@
         "slug": "drugApp",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./src/img/logo-drug.png",
+        "icon": "./src/img/logo-drug-mini.png",
         "splash": {
             "image": "./src/img/bg-drug.png",
             "resizeMode": "contain",
@@ -17,10 +17,15 @@
             "**/*"
         ],
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "buildNumber": "1"
         },
         "web": {
             "favicon": "./assets/favicon.png"
+        },
+        "android": {
+            "package": "com.interhub.drug",
+            "versionCode": 1
         }
     }
 }

@@ -1,51 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Dimensions,
-  LayoutAnimation,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
-import { List, TextInput, Divider } from 'react-native-paper';
-import { Entypo, FontAwesome } from "@expo/vector-icons";
-import { connect } from "react-redux";
-import { Button, Icon, Input } from "react-native-elements";
+import React, {useEffect, useState} from 'react';
+import {AsyncStorage, Dimensions, LayoutAnimation, ScrollView, StyleSheet, View} from 'react-native';
+import {Divider} from 'react-native-paper';
+import {connect} from "react-redux";
+import {Button, Input} from "react-native-elements";
 import setNotification from "../../service/notification";
 import PeriodsName from '../../vars/periodsName.js'
-import TimePicker from "react-native-24h-timepicker";
-import { DETAILS, HOME } from "../../store/screenNames";
+import {DETAILS} from "../../store/screenNames";
 import SelectPeriod from "./SelectPeriod";
-import TypesName from '../../vars/typesName.js'
 import SelectTypes from "./SelectTypes";
 import InputDate from "./InputDate";
-import moment from 'moment'
-import { AsyncStorage } from 'react-native';
-import { StackActions } from '@react-navigation/native';
 import * as Promise from "bluebird";
 import getDaysArray from "../../vars/getDaysArray";
 import DaysCheckbox from "./DaysCheckbox";
-import { getBackgroundColor } from "react-native/Libraries/LogBox/UI/LogBoxStyle";
-import TouchableRipple from "react-native-paper/src/components/TouchableRipple/index.native";
-import * as Colors from "react-native-paper";
 import TimePanel from "./TimePanel";
-import { PickerAdd } from "./Pickers";
 import Message from "../../comps/Message";
 
-const H = Dimensions.get('window').height;
+const H = Dimensions.get('screen').height;
 
-function Add( {route, screen, navigation, theme} ) {
-  const edit = route?.params?.edit;
-  //состояние данных ввода
-  const [input, setInput] = useState({
+const initialInput = {
     id: [],
     name: '',
     period: '',//PeriodsName.EVERYDAY,
     time: [{
-      H: 8,
-      M: 30,
-      key: 0
+        H: 8,
+        M: 30,
+        key: 0
     }],
     type: '',//TypesName.TABLET,
     dose: 0,
@@ -53,223 +32,235 @@ function Add( {route, screen, navigation, theme} ) {
     end: 0,
     daysWeek: [1, 3, 5],
     days: []
-  })
-
-
-  useEffect(() => {
-    if (edit) {
-      setInput(edit)
-      navigation.setOptions({title: 'Редактирование'})
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-    }
-  }, [])
-
-  //изменение имени препарата
-  const nameInput = ( txt ) => {
-    setInput({...input, name: txt})
-  }
-  //добавить время приема в массив
-  const addTime = ( H, M ) => {
-    let items = [...input.time];
-    items.push({H, M, key: Math.max(...input.time.map(el => el.key)) + 1})
-    setInput({...input, time: items})
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-  }
-  //удалить время из массива
-  const removeTime = ( key ) => {
-    if (input.time.length === 1) {
-      return false
-    }
-    let time = [...input.time].filter(el => el.key !== key);
-    setInput({...input, time})
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-  }
-
-  //обновление времени
-  const updateTime = ( H, M, key ) => {
-    let time = [...input.time]
-    let index = time.findIndex(el => el.key === key)
-    time[index] = {H, M}
-    setInput({...input, time})
-  }
-  //изменение периода
-  const onSelectPeriod = ( period ) => {
-    if (period) {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-      setInput({...input, period})
-    }
-  }
-  //изменение единицы изменения (капли , ложки и тд...)
-  const onSelectType = ( type ) => {
-    if (type) {
-      setInput({...input, type})
-    }
-  }
-  //изменение числа дозировки
-  const onSelectDose = ( dose ) => {
-    if (dose) {
-      setInput({...input, dose})
-    }
-  }
-  //изменнение начала или конца курса с фильтром
-  const startEnd = ( param, date ) => {
-    if (param in input && typeof date == 'number' && date) {
-      setInput({...input, [param]: date})
-    } else {
-      setInput({...input, [param]: 0})
-    }
-  }
-  //добавление или удаления дня недели
-  const changeCheckbox = ( num ) => {
-    let daysWeek = [...input.daysWeek];
-    daysWeek.includes(num) ?
-      daysWeek.splice(daysWeek.findIndex(( find ) => find === num), 1) :
-      daysWeek.push(num)
-    setInput({...input, daysWeek})
-  }
-
-  //установка нового значения days на основе нового набора данных ввода
-  useEffect(() => {
-    input.days = getDaysArray({...input})
-  }, [input])
-
-  //проверка полей ввода на пустоту
-  const confirmForm = () => {
-    if (
-      input.name === '' ||
-      !input.period ||
-      input.time.length === 0 ||
-      !input.type ||
-      input.dose === 0
-    ) {
-      Message('Заполните все поля')
-      return false
-    }
-    return true
-  }
-  //сохранить отчет в памяти устройства
-  const saveOnDevice = () => {
-    AsyncStorage.getItem('input')
-                .then(data => {
-                  console.log(input, "NEW INPUT")
-                  if (data === null) {
-                    return AsyncStorage.setItem('input', JSON.stringify([{...input}]))
-                  } else {
-                    return AsyncStorage.setItem('input', JSON.stringify([...JSON.parse(data), {...input}]))
-                  }
-                })
-                .then(() => {
-                  navigation.goBack()
-                  // navigation.dispatch(StackActions.popToTop());
-                  setTimeout(() => {
-                    navigation.jumpTo(DETAILS)
-                  }, 100)
-                })
-  }
-
-  useEffect(() => {
-    if (input.id.length > 0) {
-      return saveOnDevice()
-    }
-  }, [input])
-
-  //итоговое добавление записи
-  const addInput = () => {
-    // console.log(moment(input.end).diff(input.start, 'days'), 'diffff')
-    if (!confirmForm()) {
-      return
-    }
-    setNotification({...input})
-    .then(mass => {
-      if (Array.isArray(mass)) {
-        Promise.all(mass)
-               .then(( els ) => {
-
-                 setInput({...input, id: [...els]})
-               })
-      }
-    })
-    .catch(e => {
-      console.log(e)
-    })
-  }
-
-
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Input
-          inputStyle={styles.inName}
-          value={input.name}
-          onChangeText={nameInput}
-          placeholder={'Название лекарства'}
-        />
-        {/*SELECT PERIOD-----------------------------------------------*/}
-        <View style={styles.boxSelect}>
-          <SelectPeriod input={input} onSelectPeriod={onSelectPeriod}/>
-        </View>
-        {/*PERIOD CHECKBOXES WEEK-----------------------------------------------*/}
-        {input.period === PeriodsName.CHECKBOX &&
-        <View>
-          <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
-        </View>}
-        <Divider/>
-        {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}
-        <TimePanel input={input}
-                   removeTime={removeTime}
-                   theme={theme}
-                   addTime={addTime}
-                   updateTime={updateTime}/>
-        {/*TIME TYPE AND DOSE SELECTORS-----------------------------------------------*/}
-        <SelectTypes onSelectType={onSelectType} onSelectDose={onSelectDose} input={input}/>
-        {/*DATE PICKERS-----------------------------------------------*/}
-        <InputDate input={input} startEnd={startEnd}/>
-        {/*ADD BTN-----------------------------------------------*/}
-        <View>
-          <Button
-            onPress={addInput}
-            buttonStyle={{height: 60, backgroundColor: theme.navBg}}
-            containerStyle={{padding: 15}}
-            title={'Сохранить напоминание'}/>
-        </View>
-      </View>
-    </ScrollView>
-
-  );
 }
 
-const mapStateToProps = ( state ) => ({
-  screen: state.screen,
-  theme: state.theme
+function Add({route, screen, navigation, theme}) {
+    const edit = route?.params?.edit;
+    //состояние данных ввода
+    const [input, setInput] = useState(initialInput)
+
+
+    useEffect(() => {
+        if (edit) {
+            setInput(edit)
+            navigation.setOptions({title: 'Редактирование'})
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+        }
+    }, [])
+
+    //изменение имени препарата
+    const nameInput = (txt) => {
+        setInput({...input, name: txt})
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    }
+    //добавить время приема в массив
+    const addTime = (H, M) => {
+        let items = [...input.time];
+        items.push({H, M, key: Math.max(...input.time.map(el => el.key)) + 1})
+        setInput({...input, time: items})
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+    }
+    //удалить время из массива
+    const removeTime = (key) => {
+        if (input.time.length === 1) {
+            return false
+        }
+        let time = [...input.time].filter(el => el.key !== key);
+        setInput({...input, time})
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+    }
+
+    //обновление времени
+    const updateTime = (H, M, key) => {
+        let time = [...input.time]
+        let index = time.findIndex(el => el.key === key)
+        time[index] = {H, M}
+        setInput({...input, time})
+    }
+    //изменение периода
+    const onSelectPeriod = (period) => {
+        if (period) {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+            setInput({...input, period})
+        }
+    }
+    //изменение единицы изменения (капли , ложки и тд...)
+    const onSelectType = (type) => {
+        if (type) {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+            setInput({...input, type})
+        }
+    }
+    //изменение числа дозировки
+    const onSelectDose = (dose) => {
+        if (dose) {
+            setInput({...input, dose})
+        }
+    }
+    //изменнение начала или конца курса с фильтром
+    const startEnd = (param, date) => {
+        if (param in input && typeof date == 'number' && date) {
+            setInput({...input, [param]: date})
+        } else {
+            setInput({...input, [param]: 0})
+        }
+    }
+    //добавление или удаления дня недели
+    const changeCheckbox = (num) => {
+        let daysWeek = [...input.daysWeek];
+        daysWeek.includes(num) ?
+            daysWeek.splice(daysWeek.findIndex((find) => find === num), 1) :
+            daysWeek.push(num)
+        setInput({...input, daysWeek})
+    }
+
+    //установка нового значения days на основе нового набора данных ввода
+    useEffect(() => {
+        input.days = getDaysArray({...input})
+    }, [input])
+
+    //проверка полей ввода на пустоту
+    const confirmForm = () => {
+        if (
+            input.name === '' ||
+            !input.period ||
+            input.time.length === 0 ||
+            !input.type ||
+            input.dose === 0
+        ) {
+            Message('Заполните все поля')
+            return false
+        }
+        return true
+    }
+    //сохранить отчет в памяти устройства
+    const saveOnDevice = () => {
+        AsyncStorage.getItem('input')
+            .then(data => {
+                console.log(input, "NEW INPUT")
+                if (data === null) {
+                    return AsyncStorage.setItem('input', JSON.stringify([{...input}]))
+                } else {
+                    return AsyncStorage.setItem('input', JSON.stringify([...JSON.parse(data), {...input}]))
+                }
+            })
+            .then(() => {
+                navigation.goBack()
+                // navigation.dispatch(StackActions.popToTop());
+                setTimeout(() => {
+                    navigation.jumpTo(DETAILS)
+                }, 100)
+            })
+    }
+
+    useEffect(() => {
+        if (input.id.length > 0) {
+            return saveOnDevice()
+        }
+    }, [input])
+
+    //итоговое добавление записи
+    const addInput = () => {
+        // console.log(moment(input.end).diff(input.start, 'days'), 'diffff')
+        if (!confirmForm()) {
+            return
+        }
+        setNotification({...input})
+            .then(mass => {
+                if (Array.isArray(mass)) {
+                    Promise.all(mass)
+                        .then((els) => {
+
+                            setInput({...input, id: [...els]})
+                        })
+                }
+            })
+            .catch(e => {
+                console.log(e)
+            })
+    }
+
+    const step1 = input.name !== '';
+    const step2 = step1 && input.period !== ''
+    ''
+    const step3 = step2 && input.type !== '' && input.dose !== 0;
+
+    return (
+        <ScrollView style={{backgroundColor: '#fff'}} >
+            <View style={styles.container}>
+                <Input
+                    inputStyle={styles.inName}
+                    value={input.name}
+                    onChangeText={nameInput}
+                    placeholder={'Название лекарства'}
+                />
+                {/*SELECT PERIOD-----------------------------------------------*/}
+                {step1 && <View style={styles.boxSelect}>
+                    <SelectPeriod input={input} onSelectPeriod={onSelectPeriod}/>
+                </View>}
+                {/*PERIOD CHECKBOXES WEEK-----------------------------------------------*/}
+                {input.period === PeriodsName.CHECKBOX &&
+                <View>
+                    <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
+                </View>}
+                {step2 && <Divider/>}
+                {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}
+                {step2 && <TimePanel input={input}
+                                     removeTime={removeTime}
+                                     theme={theme}
+                                     addTime={addTime}
+                                     updateTime={updateTime}/>}
+                {/*TIME TYPE AND DOSE SELECTORS-----------------------------------------------*/}
+                {step2 && <SelectTypes onSelectType={onSelectType} onSelectDose={onSelectDose} input={input}/>}
+                {/*DATE PICKERS-----------------------------------------------*/}
+                {step3 && <InputDate input={input} startEnd={startEnd}/>}
+                {/*ADD BTN-----------------------------------------------*/}
+                {step3 && <View>
+                    <Button
+                        onPress={addInput}
+                        buttonStyle={{height: 60, backgroundColor: theme.navBg}}
+                        containerStyle={{padding: 15}}
+                        title={'Сохранить напоминание'}/>
+                </View>}
+            </View>
+        </ScrollView>
+
+    );
+}
+
+const mapStateToProps = (state) => ({
+    screen: state.screen,
+    theme: state.theme
 })
 
 const mapDispatchToProps = {}
 
-
 export default connect(mapStateToProps, mapDispatchToProps)(Add)
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    flex: 1,
-    minHeight: H,
-    backgroundColor: '#fff',
-  },
-  inName: {
-    margin: 0,
-    padding: 0,
-    fontSize: 16
-  },
-  btnBox: {width: 300},
-  btnContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    height: 80,
-    // borderTopWidth: 0.5,
-  },
-  boxSelect: {
-    marginBottom: 30
-  },
+    container: {
+        padding: 10,
+        flex: 1,
+        minHeight: H / 2,
+        backgroundColor: '#fff',
+        // flexDirection: 'column',
+        justifyContent: 'space-around'
+    },
+    inName: {
+        margin: 0,
+        padding: 0,
+        fontSize: 16
+    },
+    btnBox: {width: 300},
+    btnContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        height: 80,
+        // borderTopWidth: 0.5,
+    },
+    boxSelect: {
+        marginBottom: 30
+    },
 });
