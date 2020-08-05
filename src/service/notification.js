@@ -42,7 +42,9 @@ const setNotification = async ({
                     title,
                     body,
                     vibrate: true,
-                    priority: 'max'
+                    ...Platform.OS !== 'ios' ? {
+                        priority: 'max'
+                    } : {}
                 },
                 trigger: new Date(new Date(new Date(day.setHours(t.H)).setMinutes(t.M)).setSeconds(0))
             });
