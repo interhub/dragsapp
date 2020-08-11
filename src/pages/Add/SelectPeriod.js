@@ -6,7 +6,7 @@ import Periods from '../../vars/periods.js'
 const H = Dimensions.get('window').height;
 
 export default ({input, onSelectPeriod}) => {
-    return <View style={{marginHorizontal: 4}}>
+    return <View style={{marginHorizontal: 4, padding: 10}}>
         <RNPickerSelect
             useNativeAndroidPickerStyle={false}
             value={input.period}

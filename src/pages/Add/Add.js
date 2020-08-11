@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {AsyncStorage, Dimensions, LayoutAnimation, ScrollView, StyleSheet, View} from 'react-native';
-import {Divider, HelperText} from 'react-native-paper';
+import {Divider, HelperText, TextInput} from 'react-native-paper';
 import {connect} from "react-redux";
-import {Button, Input} from "react-native-elements";
+import {Button} from "react-native-elements";
 import setNotification from "../../service/notification";
 import PeriodsName from '../../vars/periodsName.js'
 import {DETAILS} from "../../store/screenNames";
@@ -33,6 +33,14 @@ const initialInput = {
     daysWeek: [1, 3, 5],
     days: []
 }
+
+const themePaper = {
+    colors: {
+        primary: '#777',
+        background: 'rgba(255,255,255,0)',
+    }
+};
+
 
 function Add({route, screen, navigation, theme}) {
     const edit = route?.params?.edit;
@@ -191,19 +199,24 @@ function Add({route, screen, navigation, theme}) {
         <ScrollView style={{backgroundColor: '#fff'}}>
             <View style={styles.container}>
                 <View>
-                    {step1 && <HelperText type={'info'} visible={'hello'}>
-                        Название лекарства
-                    </HelperText>}
-                    <Input
-                        inputStyle={styles.inName}
+                    {/*{step1 && <HelperText type={'info'} visible={'hello'}>*/}
+                    {/*    Название лекарства*/}
+                    {/*</HelperText>}*/}
+                    <TextInput
+                        theme={{colors: themePaper.colors}}
+                        // inputStyle={styles.inName}
                         value={input.name}
+                        // mode={'outlined'}
                         onChangeText={nameInput}
-                        placeholder={'Название лекарства'}
+                        label={'Название лекарства'}
                     />
                 </View>
 
                 {/*TIME TYPE AND DOSE SELECTORS-----------------------------------------------*/}
-                {step1 && <SelectTypes onSelectType={onSelectType} onSelectDose={onSelectDose} input={input}/>}
+                {step1 && <SelectTypes themePaper={themePaper}
+                                       onSelectType={onSelectType}
+                                       onSelectDose={onSelectDose}
+                                       input={input}/>}
                 {/*SELECT PERIOD-----------------------------------------------*/}
                 {step2 && <View style={styles.boxSelect}>
                     {step3 && <HelperText type={'info'} visible={'hello'}>

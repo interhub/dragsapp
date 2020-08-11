@@ -16,9 +16,10 @@ import moment from 'moment'
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Geo from "./src/pages/Geo/Geo";
-import {Entypo} from '@expo/vector-icons';
+import {Entypo, MaterialCommunityIcons} from '@expo/vector-icons';
 import {setName} from "./src/store/actions";
 import StartForm from "./src/comps/StartForm";
+import {Provider as PaperProvider} from 'react-native-paper'
 
 const Tab = createMaterialBottomTabNavigator()
 moment.locale('ru')
@@ -64,7 +65,9 @@ function App({theme, name, openSetting}) {
 
     function Three() {
         return <Stack.Navigator initialRouteName={GEO}>
-            <Stack.Screen options={getTitleStyle('Просмотр')} name={GEO} component={Geo}/>
+            <Stack.Screen
+                options={getTitleStyle(name === '' ? 'Напоминиания' : name)}
+                name={GEO} component={Geo}/>
         </Stack.Navigator>
     }
 
@@ -89,21 +92,19 @@ function App({theme, name, openSetting}) {
                     tabBarLabel: 'Все напомининия',
                     tabBarIcon: ({color}) => (
                         <Entypo name="back-in-time" size={24} color={color}/>
-
                     ),
                 }} name={DETAILS} component={Two}/>
                 <Tab.Screen options={{
-                    title: 'Геонапоминания',
-                    tabBarLabel: 'Геонапоминания',
+                    title: 'Фото рецепта',
+                    tabBarLabel: 'Фото рецепта',
                     tabBarIcon: ({color}) => (
-                        <Entypo name="location-pin" size={24} color={color}/>
+                        <MaterialCommunityIcons name="camera-plus" size={24} color={color}/>
                     ),
                 }} name={GEO} component={Three}/>
             </Tab.Navigator>
         </SafeAreaView>
     </NavigationContainer>
 }
-
 
 const mapStateToProps = (state) => ({
     name: state.name,
@@ -116,9 +117,12 @@ const mapDispatchToProps = {
 
 const ConnectApp = connect(mapStateToProps, mapDispatchToProps)(App)
 
+
 const ProviderApp = () => {
     return <Provider store={store}>
-        <ConnectApp/>
+        <PaperProvider>
+            <ConnectApp/>
+        </PaperProvider>
     </Provider>
 }
 
