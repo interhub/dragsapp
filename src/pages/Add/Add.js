@@ -184,9 +184,8 @@ function Add({route, screen, navigation, theme}) {
     }
 
     const step1 = input.name !== '';
-    const step2 = step1 && input.period !== ''
-    ''
-    const step3 = step2 && input.type !== '' && input.dose !== 0;
+    const step2 = step1 && input.type !== '' && input.dose !== 0;
+    const step3 = step2 && input.period !== ''
 
     return (
         <ScrollView style={{backgroundColor: '#fff'}}>
@@ -203,10 +202,11 @@ function Add({route, screen, navigation, theme}) {
                     />
                 </View>
 
-                {/*<TextField/>*/}
+                {/*TIME TYPE AND DOSE SELECTORS-----------------------------------------------*/}
+                {step1 && <SelectTypes onSelectType={onSelectType} onSelectDose={onSelectDose} input={input}/>}
                 {/*SELECT PERIOD-----------------------------------------------*/}
-                {step1 && <View style={styles.boxSelect}>
-                    {step2 && <HelperText type={'info'} visible={'hello'}>
+                {step2 && <View style={styles.boxSelect}>
+                    {step3 && <HelperText type={'info'} visible={'hello'}>
                         Расписание
                     </HelperText>}
                     <SelectPeriod input={input} onSelectPeriod={onSelectPeriod}/>
@@ -223,8 +223,6 @@ function Add({route, screen, navigation, theme}) {
                                      theme={theme}
                                      addTime={addTime}
                                      updateTime={updateTime}/>}
-                {/*TIME TYPE AND DOSE SELECTORS-----------------------------------------------*/}
-                {step2 && <SelectTypes onSelectType={onSelectType} onSelectDose={onSelectDose} input={input}/>}
                 {/*DATE PICKERS-----------------------------------------------*/}
                 {step3 && <InputDate input={input} startEnd={startEnd}/>}
                 {/*ADD BTN-----------------------------------------------*/}
