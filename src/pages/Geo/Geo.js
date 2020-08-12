@@ -1,9 +1,37 @@
-import {Text, TouchableOpacity, View} from "react-native";
-import React, {useEffect} from 'react';
+import {Alert, AsyncStorage, ScrollView, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useState} from 'react';
 import {FontAwesome} from "@expo/vector-icons";
-import {connect} from 'react-redux'
+import PhotoItem from "./PhotoItem";
+import {connect} from "react-redux";
+import ModalPhoto from "./ModalPhoto";
+import addPhoto from "../../vars/addPhoto";
+
 
 const Geo = ({navigation, theme}) => {
+
+    const showAlert = () => Alert.alert(
+        "Удалить?",
+        "Фото будет удалено из библиотеки",
+        [
+            {
+                text: "Отмена",
+                onPress: () => setOpenImg(null),
+                style: "cancel"
+            },
+            {
+                text: "Подтвердить", onPress: () => {
+                    let index = list.findIndex(el => el === openImg)
+                    if (index) {
+                        removeImg(index)
+                    }
+                }
+            }
+        ],
+        {cancelable: false}
+    );
+
+
+    const [list, setList] = useState([])
     useEffect(() => {
         navigation.setOptions({
 
@@ -15,10 +43,57 @@ const Geo = ({navigation, theme}) => {
                 </TouchableOpacity>
             ),
         });
+        AsyncStorage.getItem('img', (err, data) => {
+            if (data !== null) {
+                setList(JSON.parse(data))
+            }
+        })
     }, [])
-    return <View>
-        <Text style={{textAlign: 'center', margin: 30, fontSize: 20}}>В разработке</Text>
-    </View>
+
+    const [loading, selLoading] = useState(false)
+
+    const [openImg, setOpenImg] = useState(null);
+    const openItem = (img) => {
+        setOpenImg(img)
+    }
+    const setImgToTrace = async (list) => {
+        selLoading(true)
+        setList(list)
+        await AsyncStorage.setItem('img', JSON.stringify(list))
+        selLoading(false)
+    }
+    const saveImg = (img) => {
+        const newList = [...list, img]
+        setImgToTrace(newList)
+    }
+    const removeImg = (id) => {
+        let newList = [...list]
+        newList.splice(id, 1)
+        setImgToTrace(newList)
+        setOpenImg('')
+    }
+    return <ScrollView>
+        <ModalPhoto onDelete={() => {
+            showAlert()
+        }} onClose={() => setOpenImg(null)} openImg={openImg}/>
+        <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap'}}>
+            <PhotoItem
+                img={require('../../img/plus.png')}
+                onOpen={() => {
+                    selLoading(true)
+                    addPhoto().then(img => {
+                        selLoading(false)
+                        saveImg(img)
+                    })
+                }}/>
+            {list.map((el, id) => {
+                return <PhotoItem
+                    onOpen={openItem}
+                    img={{uri: el}}
+                    key={id}/>
+            }).reverse()}
+        </View>
+    </ScrollView>
 }
 
 const mapStateToProps = (state) => ({
