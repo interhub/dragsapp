@@ -9,9 +9,13 @@ import ListItem from "./ListItem";
 import RightOk from "../../comps/RightOk";
 import LeftTime from "../../comps/LeftTime";
 import uploadInput from "../../vars/uploadInput";
+import UploadDialog from "../../comps/UploadDialog";
 
 const H = Dimensions.get('screen').height;
 const W = Dimensions.get('screen').width;
+let close = true
+let currentItem = {}
+
 
 function Details({navigation, theme}) {
     const [list, setList] = useState([])
@@ -55,25 +59,47 @@ function Details({navigation, theme}) {
         AsyncStorage.setItem('input', JSON.stringify(newList));
     }
 
+    const [visibleDialog, setVisibleDialog] = useState(false)
     return (
         <ScrollView>
+            <UploadDialog
+                setVisible={setVisibleDialog}
+                visible={visibleDialog}
+                callback={() => {
+                    uploadInput(currentItem)
+                    removeInput(currentItem, currentItem.key)
+                }}/>
             <View style={styles.container}>
                 <List.Section>
                     <List.Subheader>Просмотр всех записей</List.Subheader>
                     <Divider/>
                     {list.length > 0 && <SwipeListView
+                        onSwipeValueChange={({direction, isOpen, value}) => {
+                            if (direction === 'left' && value > 0.5 * W && close) {
+                                close = false
+                                setVisibleDialog(true)
+                            }
+                        }}
+                        onRowClose={() => {
+                            close = true
+                        }}
                         useNativeDriver={false}
                         data={list}
                         // disableRightSwipe
                         renderItem={({item}) => (
-                            <ListItem theme={theme}
-                                      key={item.key}
-                                      item={item}
-                                      editInput={() => editInput(item)}
-                            />
+                            <View onTouchStart={() => {
+                                currentItem = item;
+                            }}>
+                                <ListItem theme={theme}
+                                          key={item.key}
+                                          item={item}
+                                          editInput={() => editInput(item)}
+                                />
+                            </View>
                         )}
                         renderHiddenItem={(data, rowMap) => (
-                            <View style={{padding: 5, borderRadius: 25, overflow: 'hidden'}}>
+                            <View
+                                style={{padding: 5, borderRadius: 25, overflow: 'hidden'}}>
                                 <View
                                     style={{
                                         backgroundColor: '#1A77D2',
@@ -82,12 +108,9 @@ function Details({navigation, theme}) {
                                         alignItems: 'center',
                                         height: '100%',
                                     }}>
-                                    <TouchableRipple
-                                        onPress={() => {
-                                        uploadInput(data.item)
-                                    }}>
+                                    <View>
                                         <LeftTime/>
-                                    </TouchableRipple>
+                                    </View>
                                     <TouchableRipple
                                         onPress={() => removeInput(data.item, data.item.key)}>
                                         <RightOk/>
@@ -95,7 +118,7 @@ function Details({navigation, theme}) {
                                 </View>
                             </View>
                         )}
-                        leftOpenValue={75}
+                        leftOpenValue={W - 100}
                         rightOpenValue={-75}
                     />}
                 </List.Section>
