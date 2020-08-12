@@ -4,18 +4,30 @@ import {Divider, HelperText, List} from "react-native-paper";
 import TouchableRipple from "react-native-paper/src/components/TouchableRipple/index.native";
 import {SwipeListView} from 'react-native-swipe-list-view';
 import {FontAwesome} from "@expo/vector-icons";
-import {PickerAdd, PickerUpdate} from "./Pickers";
 import ListMoveItem from "./ListMoveItem";
+import TimeDialog from "./TimeDialog";
 
-const TimePanel = ({input, removeTime, theme, addTime, updateTime}) => {
+const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) => {
 
     const updatePicker = useRef(null)
     const picker = useRef(null)
 
     const [editedNumber, setEditionNumber] = useState(0)
-
+    const [visibleSelect, setVisibleSelect] = useState(false)
+    const [visibleSelectUpdate, setVisibleSelectUpdate] = useState(false)
+    const [updateKey, setUpdateKey] = useState(-1)
     return (
         <View>
+            <TimeDialog visible={visibleSelect}
+                        onSave={addTime}
+                        setVisible={setVisibleSelect}
+                        themePaper={themePaper}/>
+            <TimeDialog visible={visibleSelectUpdate}
+                        onSave={(H, M) => {
+                            updateTime(H, M, updateKey)
+                        }}
+                        setVisible={setVisibleSelectUpdate}
+                        themePaper={themePaper}/>
             <List.Section>
                 {/*<List.Subheader>Сколько раз в день</List.Subheader>*/}
                 <HelperText type={'info'} visible={'hello'}>
@@ -26,7 +38,7 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime}) => {
                     title={input.time.length}
                     right={(props) =>
                         <TouchableRipple onPress={() => {
-                            picker.current.open()
+                            setVisibleSelect(true)
                         }}>
 
                             <List.Icon {...props}
@@ -51,13 +63,19 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime}) => {
                     data={input.time}
                     disableRightSwipe
                     renderItem={({item}) => (
-                        <ListMoveItem theme={theme}
-                                      key={item.key}
-                                      num={item.key}
-                                      time={item}
-                                      updatePicker={updatePicker}
-                                      setEditionNumber={setEditionNumber}
-                        />
+                        <View>
+                            <ListMoveItem theme={theme}
+                                          key={item.key}
+                                          num={item.key}
+                                          time={item}
+                                          updatePicker={() => {
+                                              setVisibleSelectUpdate(true)
+                                              setUpdateKey(item.key)
+                                          }}
+                                          setEditionNumber={setEditionNumber}
+                            />
+                        </View>
+
                     )}
                     renderHiddenItem={(data, rowMap) => (
                         <View
@@ -81,8 +99,8 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime}) => {
                 />
             </List.Section>
 
-            <PickerUpdate updatePicker={updatePicker} updateTime={updateTime} editedNumber={editedNumber}/>
-            <PickerAdd picker={picker} addTime={addTime}/>
+            {/*<PickerUpdate updatePicker={updatePicker} updateTime={updateTime} editedNumber={editedNumber}/>*/}
+            {/*<PickerAdd picker={picker} addTime={addTime}/>*/}
         </View>
     )
 }

@@ -232,6 +232,7 @@ function Add({route, screen, navigation, theme}) {
                 {step2 && <Divider/>}
                 {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}
                 {step2 && <TimePanel input={input}
+                                     themePaper={themePaper}
                                      removeTime={removeTime}
                                      theme={theme}
                                      addTime={addTime}
