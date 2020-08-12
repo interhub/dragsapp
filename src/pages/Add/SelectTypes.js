@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-import Types from '../../vars/types.js'
-import {TextInput} from "react-native-paper";
-
+import {TextInput, TouchableRipple} from "react-native-paper";
+import DialogPicker from "./DialogPicker";
+import types from "../../vars/types";
 
 const H = Dimensions.get('window').height;
 const W = Dimensions.get('window').width;
@@ -15,35 +14,40 @@ const W = Dimensions.get('window').width;
 // })
 
 export default ({input, onSelectType, onSelectDose, themePaper}) => {
+
+    const [visibleSelect, setVisibleSelect] = useState(false)
+
     return <View style={styles.container}>
         <View style={styles.select}>
-            {/*{input.type !== '' && <HelperText type={'info'} visible={'hello'}>*/}
-            {/*    Ед. измерения*/}
-            {/*</HelperText>}*/}
-            <RNPickerSelect
-                // value={input.type}
-                style={styles.select}
-                placeholder={{
-                    label: 'Ед. измерения',
-                    value: null,
-                    color: '#7a7a7a',
-                }}
-                onValueChange={onSelectType}
-                items={Types}
-            />
+            <TouchableRipple
+                style={{paddingRight: 10}}
+                onPress={() => {
+                    setVisibleSelect(true)
+                }}>
+                <TextInput
+                    theme={{colors: themePaper.colors}}
+                    editable={false}
+                    value={types.find(el => el.value === input.type)?.label || ''}
+                    style={{height: 50}}
+                    label={input.type ? 'Ед. измерения' : undefined}
+                    placeholder={input.type ? undefined : 'Ед. измерения'}
+                />
+            </TouchableRipple>
+            <DialogPicker
+                list={types}
+                resultValue={input.type}
+                setValue={onSelectType}
+                visible={visibleSelect}
+                setVisible={setVisibleSelect}/>
         </View>
         <View style={styles.select}>
-            {/*{input.dose !== 0 && <HelperText type={'info'} visible={'hello'}>*/}
-            {/*    Количество*/}
-            {/*</HelperText>}*/}
             <TextInput
                 keyboardType={'number-pad'}
-                // value={input.dose}
                 theme={{colors: themePaper.colors}}
                 style={{height: 50}}
-                placeholder={'Количество'}
+                label={input.dose ? 'Количество' : null}
                 onChangeText={onSelectDose}
-                // items={numbers}
+                placeholder={'Количество'}
             />
         </View>
     </View>

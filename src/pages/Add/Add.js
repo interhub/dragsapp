@@ -222,10 +222,10 @@ function Add({route, screen, navigation, theme}) {
                     {step3 && <HelperText type={'info'} visible={'hello'}>
                         Расписание
                     </HelperText>}
-                    <SelectPeriod input={input} onSelectPeriod={onSelectPeriod}/>
+                    <SelectPeriod themePaper={themePaper} input={input} onSelectPeriod={onSelectPeriod}/>
                 </View>}
                 {/*PERIOD CHECKBOXES WEEK-----------------------------------------------*/}
-                {input.period === PeriodsName.CHECKBOX &&
+                {input.period === PeriodsName.CHECKBOX && step2 &&
                 <View>
                     <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
                 </View>}
