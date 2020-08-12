@@ -5,6 +5,8 @@ import PhotoItem from "./PhotoItem";
 import {connect} from "react-redux";
 import ModalPhoto from "./ModalPhoto";
 import addPhoto from "../../vars/addPhoto";
+import PhotoModalPicker from "./PhotoModalPicker";
+import addCamera from "../../vars/addCamera";
 
 
 const Geo = ({navigation, theme}) => {
@@ -72,19 +74,37 @@ const Geo = ({navigation, theme}) => {
         setImgToTrace(newList)
         setOpenImg('')
     }
+
+    const [openPicker, setOpenPicker] = useState(false)
     return <ScrollView>
+        <PhotoModalPicker
+            addPhoto={() => {
+                selLoading(true)
+                addPhoto().then(img => {
+                    selLoading(false)
+                    saveImg(img)
+                    setOpenPicker(false)
+                })
+            }}
+            addCamera={() => {
+                addCamera()
+                    .then(img => {
+                        selLoading(false)
+                        saveImg(img)
+                        setOpenPicker(false)
+                    })
+            }}
+            visible={openPicker}
+            setVisible={setOpenPicker}/>
         <ModalPhoto onDelete={() => {
             showAlert()
-        }} onClose={() => setOpenImg(null)} openImg={openImg}/>
+        }} onClose={() => setOpenImg(null)}
+                    openImg={openImg}/>
         <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap'}}>
             <PhotoItem
                 img={require('../../img/plus.png')}
                 onOpen={() => {
-                    selLoading(true)
-                    addPhoto().then(img => {
-                        selLoading(false)
-                        saveImg(img)
-                    })
+                    setOpenPicker(true)
                 }}/>
             {list.map((el, id) => {
                 return <PhotoItem
