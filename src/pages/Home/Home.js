@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     AsyncStorage,
     Dimensions,
@@ -97,10 +97,15 @@ function Home({theme, navigation, setOpenSetting}) {
 
     const [visibleDialog, setVisibleDialog] = useState(false)
 
+    const rowRef = useRef()
+
     const now = moment().format('DD - MMMM, hh:mm');
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
             <UploadDialog
+                back={() => {
+                    rowRef.current.safeCloseOpenRow();
+                }}
                 setVisible={setVisibleDialog}
                 visible={visibleDialog}
                 callback={() => {
@@ -122,20 +127,10 @@ function Home({theme, navigation, setOpenSetting}) {
                         <List.Section>
                             {list && list.length > 0 &&
                             <SwipeListView
-                                onSwipeValueChange={({direction, isOpen, value}) => {
-                                    if (direction === 'left' && value > 0.5 * W && close) {
-                                        close = false
-                                        setVisibleDialog(true)
-                                    }
-                                }}
+                                ref={rowRef}
                                 onRowClose={() => {
                                     close = true
                                 }}
-                                shouldItemUpdate={() => {
-                                    return true
-                                }}
-                                closeOnRowPress
-                                useNativeDriver={false}
                                 data={list}
                                 swipeRowStyle={{marginTop: 20}}
                                 renderItem={({item}) => (
@@ -152,7 +147,6 @@ function Home({theme, navigation, setOpenSetting}) {
                                 )}
                                 renderHiddenItem={(data, rowMap) => (
                                     <View
-
                                         style={{padding: 5, borderRadius: 25, overflow: 'hidden'}}>
                                         <View
                                             style={{
@@ -172,6 +166,16 @@ function Home({theme, navigation, setOpenSetting}) {
                                         </View>
                                     </View>
                                 )}
+                                onLeftActionStatusChange={() => {
+                                    if (close) {
+                                        close = false
+                                        setVisibleDialog(true)
+                                        console.warn('open')
+                                    }
+                                }}
+                                keyExtractor={(item, index) => index.toString()}
+                                leftActivationValue={W - 100}
+                                leftActionValue={W - 100}
                                 leftOpenValue={W - 100}
                                 rightOpenValue={-75}
                             />}

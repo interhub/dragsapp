@@ -15,7 +15,6 @@ const TimeDialog = ({
                         visible = true,
                         setVisible,
                         editedNumber = 0
-
                     }) => {
     const hide = () => {
         setVisible(false)

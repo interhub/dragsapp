@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {AsyncStorage, Dimensions, LayoutAnimation, ScrollView, StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {AsyncStorage, Dimensions, LayoutAnimation, StyleSheet, View} from 'react-native';
 import {connect} from "react-redux";
 import * as Notifications from 'expo-notifications';
 import {ADD, HOME} from "../../store/screenNames";
@@ -59,10 +59,15 @@ function Details({navigation, theme}) {
         AsyncStorage.setItem('input', JSON.stringify(newList));
     }
 
+    const rowRef = useRef()
+
     const [visibleDialog, setVisibleDialog] = useState(false)
     return (
-        <ScrollView>
+        <View>
             <UploadDialog
+                back={() => {
+                    rowRef.current.safeCloseOpenRow();
+                }}
                 setVisible={setVisibleDialog}
                 visible={visibleDialog}
                 callback={() => {
@@ -73,20 +78,17 @@ function Details({navigation, theme}) {
                 <List.Section>
                     <List.Subheader>Просмотр всех записей</List.Subheader>
                     <Divider/>
-                    {list.length > 0 && <SwipeListView
-                        onSwipeValueChange={({direction, isOpen, value}) => {
-                            if (direction === 'left' && value > 0.5 * W && close) {
-                                close = false
-                                setVisibleDialog(true)
-                            }
-                        }}
+                    {list.length > 0 &&
+                    <SwipeListView
+                        ListFooterComponent={
+                            <View style={{height: 300}}/>
+                        }
+                        ref={rowRef}
                         onRowClose={() => {
                             close = true
                         }}
-                        useNativeDriver={false}
                         data={list}
-                        // disableRightSwipe
-                        renderItem={({item}) => (
+                        renderItem={({item, index}) => (
                             <View onTouchStart={() => {
                                 currentItem = item;
                             }}>
@@ -118,12 +120,22 @@ function Details({navigation, theme}) {
                                 </View>
                             </View>
                         )}
+                        onLeftActionStatusChange={() => {
+                            if (close) {
+                                close = false
+                                setVisibleDialog(true)
+                                console.warn('open')
+                            }
+                        }}
+                        keyExtractor={(item, index) => index.toString()}
+                        leftActivationValue={W - 100}
+                        leftActionValue={W - 100}
                         leftOpenValue={W - 100}
                         rightOpenValue={-75}
                     />}
                 </List.Section>
             </View>
-        </ScrollView>
+        </View>
     );
 }
 

@@ -2,9 +2,12 @@ import * as React from 'react';
 import {View} from 'react-native';
 import {Button, Dialog, Divider, Paragraph, Portal} from 'react-native-paper';
 
-const UploadDialog = ({visible, setVisible, callback = () => alert('test')}) => {
+const UploadDialog = ({visible, setVisible, callback = () => alert('test'), back}) => {
 
-    const hideDialog = () => setVisible(false);
+    const hideDialog = () => {
+        setVisible(false)
+        back()
+    };
 
     const ok = () => {
         hideDialog()
