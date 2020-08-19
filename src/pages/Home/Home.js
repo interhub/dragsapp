@@ -1,14 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-    AsyncStorage,
-    Dimensions,
-    ImageBackground,
-    LayoutAnimation,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {AsyncStorage, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {connect} from "react-redux";
 import {Button, List, TouchableRipple} from "react-native-paper";
 import {ADD, HOME} from "../../store/screenNames";
@@ -71,7 +62,17 @@ function Home({theme, navigation, setOpenSetting}) {
                 </TouchableOpacity>
             ),
         });
+
+        //UPDATE NEW LIST !!!
+        navigation.addListener('focus',()=>{
+            (async () => {
+                setList(await getListOnDay(activeDay))
+            })()
+        })
     }, [])
+
+
+
 
     const editInput = (el) => {
         el.id = []
@@ -182,7 +183,7 @@ function Home({theme, navigation, setOpenSetting}) {
                             onLeftActionStatusChange={({isActivated}) => {
                                 if (close && isActivated) {
                                     close = false
-                                    setVisibleDelete(true)
+                                    setVisibleDialog(true)
                                     console.warn('open', isActivated)
                                 }
                             }}
@@ -213,7 +214,7 @@ function Home({theme, navigation, setOpenSetting}) {
                         mode="contained"
                         style={styles.btnAdd}
                         onPress={() =>
-                            navigation.push(ADD)
+                            navigation.navigate(ADD)
                         }>
                     Новое напоминание
                 </Button>

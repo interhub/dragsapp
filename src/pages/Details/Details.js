@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {AsyncStorage, Dimensions, LayoutAnimation, StyleSheet, View} from 'react-native';
+import {AsyncStorage, Dimensions, StyleSheet, View} from 'react-native';
 import {connect} from "react-redux";
 import * as Notifications from 'expo-notifications';
 import {ADD, HOME} from "../../store/screenNames";
@@ -22,17 +22,19 @@ function Details({navigation, theme}) {
 
     useEffect(() => {
         return navigation.addListener('focus', () => {
-            AsyncStorage.getItem('input')
-                .then((data) => {
-                    if (data !== null) {
-                        let result = (JSON.parse(data)).map((el, key) => {
-                            el['key'] = key
-                            return el
-                        });
-                        setList(result)
-                        // console.log(result, 'PRINT')
-                    }
-                })
+            setTimeout(() => {
+                AsyncStorage.getItem('input')
+                    .then((data) => {
+                        if (data !== null) {
+                            let result = (JSON.parse(data)).map((el, key) => {
+                                el['key'] = key
+                                return el
+                            });
+                            setList(result)
+                            // console.log(result, 'PRINT')
+                        }
+                    })
+            }, 200)
         });
     }, []);
 
