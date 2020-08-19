@@ -81,12 +81,13 @@ function Home({theme, navigation, setOpenSetting}) {
         }, 300)
     }
     const removeInput = (el, key) => {
-        LayoutAnimation.configureNext({
-            duration: 700,
-            create: {type: 'linear', property: 'opacity'},
-            update: {type: 'spring', springDamping: 0.5},
-            delete: {type: 'linear', property: 'scaleXY'}
-        })
+        // console.warn(el,key)
+        // LayoutAnimation.configureNext({
+        //     duration: 700,
+        //     create: {type: 'linear', property: 'opacity'},
+        //     update: {type: 'spring', springDamping: 0.5},
+        //     delete: {type: 'linear', property: 'scaleXY'}
+        // })
         let items = [...list];
         let item = items.find(el => el.key === key)
         setList(items.filter(el => el.key !== key));
@@ -95,13 +96,16 @@ function Home({theme, navigation, setOpenSetting}) {
     }
 
     const [visibleDialog, setVisibleDialog] = useState(false)
+    const [visibleDelete, setVisibleDelete] = useState(false);
 
     const rowRef = useRef()
 
-    const now = moment().format('DD - MMMM, hh:mm');
+    // const now = moment().format('DD - MMMM, hh:mm');
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
             <UploadDialog
+                title={'Завершить напомниание'}
+                text={'Напомнить через 30 минут?'}
                 back={() => {
                     rowRef.current.safeCloseOpenRow();
                 }}
@@ -109,6 +113,17 @@ function Home({theme, navigation, setOpenSetting}) {
                 visible={visibleDialog}
                 callback={() => {
                     uploadInput(currentItem)
+                    removeInput(currentItem, currentItem.key)
+                }}/>
+            <UploadDialog
+                title={'Удалить'}
+                text={'Напомнание будет удалено'}
+                back={() => {
+                    rowRef.current.safeCloseOpenRow();
+                }}
+                setVisible={setVisibleDelete}
+                visible={visibleDelete}
+                callback={() => {
                     removeInput(currentItem, currentItem.key)
                 }}/>
             <ImageBackground source={require('../../img/empty-bg.png')}
@@ -167,15 +182,26 @@ function Home({theme, navigation, setOpenSetting}) {
                             onLeftActionStatusChange={({isActivated}) => {
                                 if (close && isActivated) {
                                     close = false
-                                    setVisibleDialog(true)
-                                    console.warn('open',isActivated)
+                                    setVisibleDelete(true)
+                                    console.warn('open', isActivated)
+                                }
+                            }}
+                            onRightActionStatusChange={({isActivated}) => {
+                                if (close && isActivated) {
+                                    close = false
+                                    setVisibleDelete(true)
+                                    console.warn('open')
                                 }
                             }}
                             keyExtractor={(item, index) => index.toString()}
+
                             leftActivationValue={W - 100}
                             leftActionValue={W - 100}
                             leftOpenValue={W - 100}
-                            rightOpenValue={-75}
+
+                            rightActivationValue={-W + 100}
+                            rightActionValue={-W + 100}
+                            rightOpenValue={-W + 100}
                         />}
                         {list && list.length === 0 &&
                         <Text style={{textAlign: 'center'}}>Сегодня ничего принимать не нужно</Text>}

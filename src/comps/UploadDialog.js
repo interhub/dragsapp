@@ -2,7 +2,7 @@ import * as React from 'react';
 import {View} from 'react-native';
 import {Button, Dialog, Divider, Paragraph, Portal} from 'react-native-paper';
 
-const UploadDialog = ({visible, setVisible, callback = () => alert('test'), back}) => {
+const UploadDialog = ({visible, setVisible, callback = () => alert('test'), back, title, text}) => {
 
     const hideDialog = () => {
         setVisible(false)
@@ -17,9 +17,9 @@ const UploadDialog = ({visible, setVisible, callback = () => alert('test'), back
         <View>
             <Portal>
                 <Dialog visible={visible} onDismiss={hideDialog}>
-                    <Dialog.Title>Завершить напомниание</Dialog.Title>
+                    <Dialog.Title>{title}</Dialog.Title>
                     <Dialog.Content>
-                        <Paragraph>Напомнить через 30 минут?</Paragraph>
+                        <Paragraph>{text}</Paragraph>
                     </Dialog.Content>
                     <Divider/>
                     <Dialog.Actions>

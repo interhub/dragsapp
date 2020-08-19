@@ -45,12 +45,12 @@ function Details({navigation, theme}) {
     }
 
     const removeInput = (el, key) => {
-        LayoutAnimation.configureNext({
-            duration: 700,
-            create: {type: 'linear', property: 'opacity'},
-            update: {type: 'spring', springDamping: 0.5},
-            delete: {type: 'linear', property: 'scaleXY'}
-        })
+        // LayoutAnimation.configureNext({
+        //     duration: 700,
+        //     create: {type: 'linear', property: 'opacity'},
+        //     update: {type: 'spring', springDamping: 0.5},
+        //     delete: {type: 'linear', property: 'scaleXY'}
+        // })
         let items = [...list];
         let item = items.find(el => el.key === key)
         let newList = items.filter(el => el.key !== key);
@@ -62,16 +62,32 @@ function Details({navigation, theme}) {
     const rowRef = useRef()
 
     const [visibleDialog, setVisibleDialog] = useState(false)
+    const [visibleDelete, setVisibleDelete] = useState(false);
+
+
     return (
         <View>
             <UploadDialog
                 back={() => {
                     rowRef.current.safeCloseOpenRow();
                 }}
+                title={'Завершить напомниание'}
+                text={'Напомнить через 30 минут?'}
                 setVisible={setVisibleDialog}
                 visible={visibleDialog}
                 callback={() => {
                     uploadInput(currentItem)
+                    removeInput(currentItem, currentItem.key)
+                }}/>
+            <UploadDialog
+                title={'Удалить'}
+                text={'Напомнание будет удалено'}
+                back={() => {
+                    rowRef.current.safeCloseOpenRow();
+                }}
+                setVisible={setVisibleDelete}
+                visible={visibleDelete}
+                callback={() => {
                     removeInput(currentItem, currentItem.key)
                 }}/>
             <View style={styles.container}>
@@ -127,11 +143,22 @@ function Details({navigation, theme}) {
                                 console.warn('open')
                             }
                         }}
+                        onRightActionStatusChange={({isActivated}) => {
+                            if (close && isActivated) {
+                                close = false
+                                setVisibleDelete(true)
+                                console.warn('open')
+                            }
+                        }}
                         keyExtractor={(item, index) => index.toString()}
+
                         leftActivationValue={W - 100}
                         leftActionValue={W - 100}
                         leftOpenValue={W - 100}
-                        rightOpenValue={-75}
+
+                        rightActivationValue={-W + 100}
+                        rightActionValue={-W + 100}
+                        rightOpenValue={-W + 100}
                     />}
                 </List.Section>
             </View>
