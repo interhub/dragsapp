@@ -27,10 +27,10 @@ export default ({input, onSelectType, onSelectDose, themePaper}) => {
                 <TextInput
                     theme={{colors: themePaper.colors}}
                     editable={false}
-                    value={types.find(el => el.value === input.type)?.label || ''}
+                    defaultValue={types.find(el => el.value === input.type)?.label || ''}
                     style={{height: 50}}
-                    label={input.type ? 'Ед. измерения' : undefined}
-                    placeholder={input.type ? undefined : 'Ед. измерения'}
+                    label={'Ед. измерения'}
+                    placeholder={'Ед. измерения'}
                 />
             </TouchableRipple>
             <DialogPicker
@@ -40,14 +40,16 @@ export default ({input, onSelectType, onSelectDose, themePaper}) => {
                 visible={visibleSelect}
                 setVisible={setVisibleSelect}/>
         </View>
-        <View style={styles.select}>
+        <View
+            style={styles.select}>
             <TextInput
+                defaultValue={String(input.dose)}
                 keyboardType={'number-pad'}
                 theme={{colors: themePaper.colors}}
+                mode={'flat'}
                 style={{height: 50}}
-                label={input.dose ? 'Количество' : null}
+                label={'Количество'}
                 onChangeText={onSelectDose}
-                placeholder={'Количество'}
             />
         </View>
     </View>

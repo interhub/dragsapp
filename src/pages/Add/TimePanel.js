@@ -23,6 +23,7 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) 
                         setVisible={setVisibleSelect}
                         themePaper={themePaper}/>
             <TimeDialog visible={visibleSelectUpdate}
+                        initialTimeObject={input.time[editedNumber]}
                         onSave={(H, M) => {
                             updateTime(H, M, updateKey)
                         }}
@@ -67,6 +68,7 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) 
                             <ListMoveItem theme={theme}
                                           key={item.key}
                                           num={item.key}
+                                          editedNumber={editedNumber}
                                           time={item}
                                           updatePicker={() => {
                                               setVisibleSelectUpdate(true)

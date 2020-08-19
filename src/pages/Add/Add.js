@@ -14,6 +14,7 @@ import getDaysArray from "../../vars/getDaysArray";
 import DaysCheckbox from "./DaysCheckbox";
 import TimePanel from "./TimePanel";
 import Message from "../../comps/Message";
+import typesName from "../../vars/typesName";
 
 const H = Dimensions.get('screen').height;
 
@@ -26,8 +27,8 @@ const initialInput = {
         M: 30,
         key: 0
     }],
-    type: '',//TypesName.TABLET,
-    dose: 0,
+    type: typesName.TABLET,//TypesName.TABLET,
+    dose: 1,
     start: 0,
     end: 0,
     daysWeek: [1, 3, 5],
@@ -204,22 +205,24 @@ function Add({route, screen, navigation, theme}) {
                     {/*</HelperText>}*/}
                     <TextInput
                         theme={{colors: themePaper.colors}}
-                        // inputStyle={styles.inName}
                         value={input.name}
-                        // mode={'outlined'}
                         onChangeText={nameInput}
                         label={'Название лекарства'}
                     />
                 </View>
 
                 {/*TIME TYPE AND DOSE SELECTORS-----------------------------------------------*/}
-                {step1 && <SelectTypes themePaper={themePaper}
-                                       onSelectType={onSelectType}
-                                       onSelectDose={onSelectDose}
-                                       input={input}/>}
+                <View style={{height: step1 ? 'auto' : 0, overflow: 'hidden'}}>
+                    <SelectTypes themePaper={themePaper}
+                                 onSelectType={onSelectType}
+                                 onSelectDose={onSelectDose}
+                                 input={input}/>
+                </View>
                 {/*SELECT PERIOD-----------------------------------------------*/}
                 {step2 && <View style={styles.boxSelect}>
-                    {step3 && <HelperText type={'info'} visible={'hello'}>
+                    {step3 && <HelperText type={'info'}
+                                          style={{marginLeft: 4}}
+                                          visible={'hello'}>
                         Расписание
                     </HelperText>}
                     <SelectPeriod themePaper={themePaper} input={input} onSelectPeriod={onSelectPeriod}/>

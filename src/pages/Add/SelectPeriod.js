@@ -33,14 +33,3 @@ export default ({input, onSelectPeriod, themePaper}) => {
     </View>
 }
 
-const styles = StyleSheet.create({
-    select: {
-        margin: -20,
-        // paddingVertical: 8,
-        // borderRadius: 8,
-        color: 'black',
-        // borderBottomWidth: 1,
-        // paddingRight: 30,
-    },
-
-});

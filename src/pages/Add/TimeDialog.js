@@ -7,8 +7,8 @@ import Message from "../../comps/Message";
 
 const TimeDialog = ({
                         initialTimeObject = {
-                            H: 12,
-                            M: 10
+                            H: '10',
+                            M: '00'
                         },
                         themePaper,
                         onSave,
@@ -39,27 +39,26 @@ const TimeDialog = ({
                         <View style={{flex: 1, paddingRight: 10}}>
                             <TextInput
                                 maxLength={2}
-                                value={initialTimeObject.H}
+                                defaultValue={String(initialTimeObject.H)}
                                 keyboardType={'number-pad'}
                                 onChangeText={(e) => {
                                     setRamTime({...ramTime, H: e})
                                 }}
                                 theme={{colors: themePaper.colors}}
                                 label={'Часы'}
-                                defaultValue={ramTime.H}
+                                // defaultValue={ramTime.H}
                             />
                         </View>
                         <View style={{flex: 1}}>
                             <TextInput
                                 maxLength={2}
-                                value={initialTimeObject.M}
+                                defaultValue={String(initialTimeObject.M)}
                                 keyboardType={'number-pad'}
                                 onChangeText={(e) => {
                                     setRamTime({...ramTime, M: e})
                                 }}
                                 theme={{colors: themePaper.colors}}
                                 label={'Минуты'}
-                                defaultValue={ramTime.M}
                             />
                         </View>
                     </View>
