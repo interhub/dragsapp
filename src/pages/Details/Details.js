@@ -120,8 +120,8 @@ function Details({navigation, theme}) {
                                 </View>
                             </View>
                         )}
-                        onLeftActionStatusChange={() => {
-                            if (close) {
+                        onLeftActionStatusChange={({isActivated}) => {
+                            if (close && isActivated) {
                                 close = false
                                 setVisibleDialog(true)
                                 console.warn('open')

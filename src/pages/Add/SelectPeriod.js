@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
-import {TextInput, TouchableRipple} from "react-native-paper";
+import {Dimensions, TouchableOpacity, View} from 'react-native';
+import {TextInput} from "react-native-paper";
 import DialogPicker from "./DialogPicker";
 import periods from "../../vars/periods";
 
@@ -10,20 +10,23 @@ export default ({input, onSelectPeriod, themePaper}) => {
     const [visibleSelect, setVisibleSelect] = useState(false)
 
     return <View style={{marginHorizontal: 4}}>
-        <TouchableRipple
+        <TouchableOpacity
+            style={{zIndex: 10000}}
             onPress={() => {
                 setVisibleSelect(true)
             }}>
-            <TextInput
-                keyboardType={'number-pad'}
-                theme={{colors: themePaper.colors}}
-                editable={false}
-                value={periods.find(el => el.value === input.period)?.label || ''}
-                style={{height: 50}}
-                label={input.period ? 'Расписание' : undefined}
-                placeholder={input.period ? undefined : 'Расписание'}
-            />
-        </TouchableRipple>
+            <View pointerEvents={'none'}>
+                <TextInput
+                    keyboardType={'number-pad'}
+                    theme={{colors: themePaper.colors}}
+                    editable={false}
+                    value={periods.find(el => el.value === input.period)?.label || ''}
+                    style={{height: 50, zIndex: -1}}
+                    label={input.period ? 'Расписание' : undefined}
+                    placeholder={input.period ? undefined : 'Расписание'}
+                />
+            </View>
+        </TouchableOpacity>
         <DialogPicker
             list={periods}
             resultValue={input.period}

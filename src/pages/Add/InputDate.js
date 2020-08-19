@@ -43,15 +43,6 @@ export default ( {startEnd, input} ) => {
 
   return <View style={styles.container}>
     <View style={styles.btnBox}>
-      {/*<Button*/}
-      {/*  onPress={() => setOpenStart(true)}*/}
-      {/*  title={'Установить начало курса приема'}/>*/}
-      {/*<Text>{input.start ? new Date((input.start)).toLocaleDateString() : ''}</Text>*/}
-      {/*<Button*/}
-      {/*  buttonStyle={{marginTop: 10}}*/}
-      {/*  onPress={() => setOpenEnd(true)}*/}
-      {/*  title={'Установить окончание курса приема'}/>*/}
-      {/*<Text>{input.end ? new Date((input.end)).toLocaleDateString() : ''}</Text>*/}
       <View style={styles.itemBox}>
         <View style={styles.pd}>
           <Text style={styles.text}>Начало</Text>

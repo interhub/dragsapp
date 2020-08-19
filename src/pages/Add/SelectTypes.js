@@ -24,14 +24,16 @@ export default ({input, onSelectType, onSelectDose, themePaper}) => {
                 onPress={() => {
                     setVisibleSelect(true)
                 }}>
-                <TextInput
-                    theme={{colors: themePaper.colors}}
-                    editable={false}
-                    defaultValue={types.find(el => el.value === input.type)?.label || ''}
-                    style={{height: 50}}
-                    label={'Ед. измерения'}
-                    placeholder={'Ед. измерения'}
-                />
+                <View pointerEvents={'none'}>
+                    <TextInput
+                        theme={{colors: themePaper.colors}}
+                        editable={false}
+                        defaultValue={types.find(el => el.value === input.type)?.label || ''}
+                        style={{height: 50}}
+                        label={'Ед. измерения'}
+                        placeholder={'Ед. измерения'}
+                    />
+                </View>
             </TouchableRipple>
             <DialogPicker
                 list={types}

@@ -4,7 +4,6 @@ import {
     Dimensions,
     ImageBackground,
     LayoutAnimation,
-    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -118,73 +117,71 @@ function Home({theme, navigation, setOpenSetting}) {
                 <CalendarBanner activeDay={activeDay} setActiveDay={setActiveDay} theme={theme}/>
                 <View>
                     {list && list.length > 0 &&
-                    <Text style={{textAlign: 'center', backgroundColor: theme.navBg, color: '#fff', padding: 12}}>
+                    <Text style={{textAlign: 'center', backgroundColor: theme.navBg, color: '#fff', padding: 32}}>
                         Для управления уведомлениями используйте свайп влево или вправо
                     </Text>}
                 </View>
-                <ScrollView showsVerticalScrollIndicator={false} style={{height: H, width: '100%'}}>
-                    <View>
-                        <List.Section>
-                            {list && list.length > 0 &&
-                            <SwipeListView
-                                ref={rowRef}
-                                onRowClose={() => {
-                                    close = true
-                                }}
-                                data={list}
-                                swipeRowStyle={{marginTop: 20}}
-                                renderItem={({item}) => (
+                <View style={{flex: 1, width: '100%', marginVertical: -10}}>
+                    <List.Section>
+                        {list && list.length > 0 &&
+                        <SwipeListView
+                            ref={rowRef}
+                            onRowClose={() => {
+                                close = true
+                            }}
+                            data={list}
+                            swipeRowStyle={{marginTop: 20}}
+                            renderItem={({item}) => (
+                                <View
+                                    onTouchStart={() => {
+                                        currentItem = item;
+                                    }}>
+                                    <ListItem theme={theme}
+                                              key={item.key}
+                                              item={item}
+                                              editInput={() => editInput(item)}
+                                    />
+                                </View>
+                            )}
+                            renderHiddenItem={(data, rowMap) => (
+                                <View
+                                    style={{padding: 5, borderRadius: 25, overflow: 'hidden'}}>
                                     <View
-                                        onTouchStart={() => {
-                                            currentItem = item;
+                                        style={{
+                                            backgroundColor: '#1A77D2',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            height: '100%',
                                         }}>
-                                        <ListItem theme={theme}
-                                                  key={item.key}
-                                                  item={item}
-                                                  editInput={() => editInput(item)}
-                                        />
-                                    </View>
-                                )}
-                                renderHiddenItem={(data, rowMap) => (
-                                    <View
-                                        style={{padding: 5, borderRadius: 25, overflow: 'hidden'}}>
-                                        <View
-                                            style={{
-                                                backgroundColor: '#1A77D2',
-                                                flexDirection: 'row',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                height: '100%',
-                                            }}>
-                                            <View>
-                                                <LeftTime/>
-                                            </View>
-                                            <TouchableRipple
-                                                onPress={() => removeInput(data.item, data.item.key)}>
-                                                <RightOk/>
-                                            </TouchableRipple>
+                                        <View>
+                                            <LeftTime/>
                                         </View>
+                                        <TouchableRipple
+                                            onPress={() => removeInput(data.item, data.item.key)}>
+                                            <RightOk/>
+                                        </TouchableRipple>
                                     </View>
-                                )}
-                                onLeftActionStatusChange={() => {
-                                    if (close) {
-                                        close = false
-                                        setVisibleDialog(true)
-                                        console.warn('open')
-                                    }
-                                }}
-                                keyExtractor={(item, index) => index.toString()}
-                                leftActivationValue={W - 100}
-                                leftActionValue={W - 100}
-                                leftOpenValue={W - 100}
-                                rightOpenValue={-75}
-                            />}
-                            {list && list.length === 0 &&
-                            <Text style={{textAlign: 'center'}}>Сегодня ничего принимать не нужно</Text>}
-                        </List.Section>
-                    </View>
-                </ScrollView>
-                <Button color={theme.navBg}
+                                </View>
+                            )}
+                            onLeftActionStatusChange={({isActivated}) => {
+                                if (close && isActivated) {
+                                    close = false
+                                    setVisibleDialog(true)
+                                    console.warn('open',isActivated)
+                                }
+                            }}
+                            keyExtractor={(item, index) => index.toString()}
+                            leftActivationValue={W - 100}
+                            leftActionValue={W - 100}
+                            leftOpenValue={W - 100}
+                            rightOpenValue={-75}
+                        />}
+                        {list && list.length === 0 &&
+                        <Text style={{textAlign: 'center'}}>Сегодня ничего принимать не нужно</Text>}
+                    </List.Section>
+                </View>
+                <Button color={theme.darkblue}
                         contentStyle={{height: '100%'}}
                         icon={() => <Entypo name="plus" size={24} color="#fff"/>}
                         mode="contained"
@@ -228,6 +225,8 @@ const styles = StyleSheet.create({
     btnAdd: {
         height: 60,
         justifyContent: 'center',
-        marginBottom: H * 0.1
+        // marginBottom: H * 0.1,
+        position: 'absolute',
+        bottom: 0.1 * H
     }
 });

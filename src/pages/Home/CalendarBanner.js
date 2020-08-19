@@ -20,7 +20,10 @@ const CalendarBanner = ({theme, activeDay, setActiveDay}) => {
     }, [])
 
     useEffect(() => {
-        scroll.current.scrollTo({x: W, animated: true})
+        setTimeout(() => {
+            if (scroll.current)
+                scroll.current.scrollTo({x: W, animated: true})
+        }, 100)
     }, [weeks])
 
     const getArrayDateByDate = (date) => {

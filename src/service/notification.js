@@ -34,7 +34,16 @@ const setNotification = async ({
     const title = 'Напоминание о приеме💊⏰';
     const body = `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`
 
-    return time.map((t, id) => {
+    const timeDecorate = (timeArr) => {
+        return timeArr.map((el, id) => {
+            return {
+                H: Number(el.H) ? Number(el.H) : 0,
+                M: Number(el.M) ? Number(el.M) : 0
+            }
+        })
+    }
+
+    return timeDecorate(time).map((t, id) => {
         return days.map((day, num) => {
             console.log(new Date(new Date(new Date(day.setHours(t.H)).setMinutes(t.M)).setSeconds(0)).toString(), "TIME")
             return Notifications.scheduleNotificationAsync({

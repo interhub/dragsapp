@@ -200,12 +200,10 @@ function Add({route, screen, navigation, theme}) {
         <ScrollView style={{backgroundColor: '#fff'}}>
             <View style={styles.container}>
                 <View>
-                    {/*{step1 && <HelperText type={'info'} visible={'hello'}>*/}
-                    {/*    Название лекарства*/}
-                    {/*</HelperText>}*/}
                     <TextInput
                         theme={{colors: themePaper.colors}}
                         value={input.name}
+                        autoFocus={!edit}
                         onChangeText={nameInput}
                         label={'Название лекарства'}
                     />
