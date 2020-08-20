@@ -210,7 +210,9 @@ function Add({route, screen, navigation, theme}) {
     const showCheckBox = input.period === PeriodsName.CHECKBOX && step2
 
     return (
-        <ScrollView style={{backgroundColor: '#fff'}}>
+        <ScrollView
+            keyboardShouldPersistTaps={'handled'}
+            style={{backgroundColor: '#fff'}}>
             <View style={styles.container}>
                 <View>
                     <TextInput

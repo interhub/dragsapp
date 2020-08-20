@@ -10,6 +10,7 @@ import RightOk from "../../comps/RightOk";
 import LeftTime from "../../comps/LeftTime";
 import uploadInput from "../../vars/uploadInput";
 import UploadDialog from "../../comps/UploadDialog";
+import ListAllInputs from "../../comps/ListAllInputs";
 
 const H = Dimensions.get('screen').height;
 const W = Dimensions.get('screen').width;
@@ -38,131 +39,15 @@ function Details({navigation, theme}) {
         });
     }, []);
 
-    const editInput = (el) => {
-        el.id = []
-        navigation.jumpTo(HOME, {callback: () => alert('hi')});
-        setTimeout(() => {
-            navigation.push(ADD, {edit: el})
-        }, 300)
-    }
-
-    const removeInput = (el, key) => {
-        try {
-            let items = [...list];
-            let item = items.find(el => el.key === key) || items[0]
-            let newList = items.filter(el => el.key !== key);
-            setList(newList);
-            item.id.forEach(str => Notifications.cancelScheduledNotificationAsync(str));
-            AsyncStorage.setItem('input', JSON.stringify(newList));
-        } catch (e) {
-            console.warn(e)
-        }
-    }
-
-    const rowRef = useRef()
-
-    const [visibleDialog, setVisibleDialog] = useState(false)
-    const [visibleDelete, setVisibleDelete] = useState(false);
-
-
     return (
         <View>
-            <UploadDialog
-                back={() => {
-                    rowRef.current.safeCloseOpenRow();
-                }}
-                title={'Завершить напомниание'}
-                text={'Напомнить через 30 минут?'}
-                setVisible={setVisibleDialog}
-                visible={visibleDialog}
-                callback={() => {
-                    uploadInput(currentItem)
-                    removeInput(currentItem, currentItem.key)
-                }}/>
-            <UploadDialog
-                title={'Удалить'}
-                text={'Напомнание будет удалено'}
-                back={() => {
-                    rowRef.current.safeCloseOpenRow();
-                }}
-                setVisible={setVisibleDelete}
-                visible={visibleDelete}
-                callback={() => {
-                    removeInput(currentItem, currentItem.key)
-                }}/>
             <View style={styles.container}>
                 <List.Section>
                     <List.Subheader>Просмотр всех записей</List.Subheader>
                     <Divider/>
-                    {list.length > 0 && list &&
-                    <SwipeListView
-                        ListFooterComponent={
-                            <View style={{height: 300}}/>
-                        }
-                        ref={rowRef}
-                        onRowClose={() => {
-                            close = true
-                        }}
-                        data={list}
-                        renderItem={({item, index}) => (
-                            <View onTouchStart={() => {
-                                currentItem = item;
-                            }}>
-                                <ListItem theme={theme}
-                                          key={item.key}
-                                          item={item}
-                                          editInput={() => editInput(item)}
-                                />
-                            </View>
-                        )}
-                        renderHiddenItem={(data, rowMap) => (
-                            <View
-                                style={{padding: 5, borderRadius: 25, overflow: 'hidden'}}>
-                                <View
-                                    style={{
-                                        backgroundColor: '#1A77D2',
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        height: '100%',
-                                    }}>
-                                    <View>
-                                        <LeftTime/>
-                                    </View>
-                                    <TouchableRipple
-                                        onPress={() => removeInput(data.item, data.item.key)}>
-                                        <RightOk/>
-                                    </TouchableRipple>
-                                </View>
-                            </View>
-                        )}
-                        onLeftActionStatusChange={({isActivated}) => {
-                            if (close && isActivated) {
-                                close = false
-                                if (rowRef.current)
-                                    rowRef.current.safeCloseOpenRow();
-                                uploadInput(currentItem)
-                                removeInput(currentItem, currentItem.key)
-                            }
-                        }}
-                        onRightActionStatusChange={({isActivated}) => {
-                            if (close && isActivated) {
-                                close = false
-                                if (rowRef.current)
-                                    rowRef.current.safeCloseOpenRow();
-                                removeInput(currentItem, currentItem.key)
-                            }
-                        }}
-                        keyExtractor={(item, index) => index.toString()}
-
-                        leftActivationValue={W }
-                        leftActionValue={W }
-                        leftOpenValue={W }
-
-                        rightActivationValue={-W }
-                        rightActionValue={-W }
-                        rightOpenValue={-W }
-                    />}
+                    {list && list.length > 0 &&
+                    <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme} />
+                    }
                 </List.Section>
             </View>
         </View>

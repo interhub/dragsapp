@@ -1,23 +1,17 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AsyncStorage, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {connect} from "react-redux";
-import {Button, List, TouchableRipple} from "react-native-paper";
+import {Button, List} from "react-native-paper";
 import {ADD, HOME} from "../../store/screenNames";
 import moment from 'moment'
 import {Entypo, FontAwesome} from "@expo/vector-icons";
 import {setOpenSetting} from "../../store/actions";
 import CalendarBanner from "./CalendarBanner";
-import {SwipeListView} from "react-native-swipe-list-view";
-import ListItem from "../Details/ListItem";
-import * as Notifications from "expo-notifications";
-import RightOk from "../../comps/RightOk";
-import LeftTime from "../../comps/LeftTime";
-import uploadInput from "../../vars/uploadInput";
+import ListAllInputs from "../../comps/ListAllInputs";
 
 const H = Dimensions.get('screen').height
 const W = Dimensions.get('screen').width
-let close = true
-let currentItem = {}
+
 
 function Home({theme, navigation, setOpenSetting}) {
     const [list, setList] = useState([]);
@@ -27,7 +21,7 @@ function Home({theme, navigation, setOpenSetting}) {
             .then((data) => {
                 if (data !== null) {
                     let result = (JSON.parse(data)).map((el, key) => ({...el, key}))
-                    console.warn(result, 'RESULT')
+                    // console.warn(result, 'RESULT')
                     return result.filter(d => (d?.days?.some(dat => (moment(dat).isSame(date, 'days')))))
                 }
             })
@@ -68,30 +62,9 @@ function Home({theme, navigation, setOpenSetting}) {
     }, [])
 
 
-    const editInput = (el) => {
-        el.id = []
-        navigation.jumpTo(HOME, {callback: () => alert('hi')});
-        setTimeout(() => {
-            navigation.push(ADD, {edit: el})
-        }, 300)
-    }
-    const removeInput = (el, key) => {
-        try {
-            let items = [...list];
-            let item = items.find(el => el.key === key) || items[0]
-            alert('REMOVED' + item.id)
-            let newList = items.filter(el => el.key !== key)
-            setList(newList);
-            item.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
-            AsyncStorage.setItem('input', JSON.stringify(newList));
-        } catch (e) {
-            console.warn(e)
-        }
-    }
-    console.warn(list.length, 'LEN')
-    // const [visibleDialog, setVisibleDialog] = useState(false)
-    // const [visibleDelete, setVisibleDelete] = useState(false);
-    const rowRef = useRef()
+
+
+
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
             <ImageBackground source={require('../../img/empty-bg.png')}
@@ -113,74 +86,11 @@ function Home({theme, navigation, setOpenSetting}) {
                     </Text>}
                 </View>
                 <View style={{flex: 1, width: '100%', marginVertical: -10}}>
+                    {/*LIST ALL LIST*/}
                     <List.Section>
                         {list && list.length > 0 &&
-                        <SwipeListView
-                            ref={rowRef}
-                            onRowClose={() => {
-                                close = true
-                            }}
-                            data={list.map((el, key) => ({...el, key}))}
-                            swipeRowStyle={{marginTop: 20}}
-                            renderItem={({item}) => (
-                                <View
-                                    onTouchStart={() => {
-                                        currentItem = item;
-                                    }}>
-                                    <ListItem theme={theme}
-                                              item={item}
-                                              editInput={() => editInput(item)}
-                                    />
-                                </View>
-                            )}
-                            renderHiddenItem={(data, rowMap) => (
-                                <View
-                                    style={{padding: 5, borderRadius: 25, overflow: 'hidden'}}>
-                                    <View
-                                        style={{
-                                            backgroundColor: '#1A77D2',
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            height: '100%',
-                                        }}>
-                                        <View>
-                                            <LeftTime/>
-                                        </View>
-                                        <TouchableRipple
-                                            onPress={() => removeInput(data.item, data.item.key)}>
-                                            <RightOk/>
-                                        </TouchableRipple>
-                                    </View>
-                                </View>
-                            )}
-                            onLeftActionStatusChange={({isActivated}) => {
-                                if (close && isActivated) {
-                                    close = false
-                                    if (rowRef.current)
-                                        rowRef.current.safeCloseOpenRow();
-                                    uploadInput(currentItem)
-                                    removeInput(currentItem, currentItem.key)
-                                }
-                            }}
-                            onRightActionStatusChange={({isActivated}) => {
-                                if (close && isActivated) {
-                                    close = false
-                                    if (rowRef.current)
-                                        rowRef.current.safeCloseOpenRow();
-                                    removeInput(currentItem, currentItem.key)
-                                }
-                            }}
-                            keyExtractor={(item, index) => index.toString()}
-
-                            leftActivationValue={W}
-                            leftActionValue={W}
-                            leftOpenValue={W}
-
-                            rightActivationValue={-W}
-                            rightActionValue={-W}
-                            rightOpenValue={-W}
-                        />}
+                        <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme} />
+                        }
                         {list && list.length === 0 &&
                         <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>Сегодня ничего принимать
                             не нужно</Text>}
