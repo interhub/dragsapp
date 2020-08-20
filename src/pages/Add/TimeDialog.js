@@ -31,7 +31,6 @@ const TimeDialog = ({
     }
 
     const [ramTime, setRamTime] = useState({H: '0', M: '0'})
-
     useEffect(() => {
         setRamTime({...initialTimeObject})
         console.warn(initialTimeObject, 'set first')

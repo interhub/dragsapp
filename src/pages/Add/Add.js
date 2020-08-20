@@ -238,7 +238,7 @@ function Add({route, screen, navigation, theme}) {
                 <View>
                     <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
                 </View>}
-                {step3 && <Divider/>}
+                {/*{step3 && <Divider/>}*/}
                 {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}
                 {step3 && <TimePanel input={input}
                                      themePaper={themePaper}
