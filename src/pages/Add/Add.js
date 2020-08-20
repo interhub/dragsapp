@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {AsyncStorage, Dimensions, LayoutAnimation, ScrollView, StyleSheet, View} from 'react-native';
-import {Divider, HelperText, TextInput} from 'react-native-paper';
+import {HelperText, TextInput} from 'react-native-paper';
 import {connect} from "react-redux";
 import {Button} from "react-native-elements";
 import setNotification from "../../service/notification";
@@ -16,6 +16,7 @@ import TimePanel from "./TimePanel";
 import Message from "../../comps/Message";
 import typesName from "../../vars/typesName";
 import moment from "moment";
+import SelfPeriod from "./SelfPeriod";
 
 const H = Dimensions.get('screen').height;
 
@@ -33,7 +34,8 @@ const initialInput = {
     start: 0,
     end: 0,
     daysWeek: [1, 3, 5],
-    days: []
+    days: [],
+    selfPeriod: 2
 }
 
 const themePaper = {
@@ -202,7 +204,10 @@ function Add({route, screen, navigation, theme}) {
 
     const step1 = input.name !== '';
     const step2 = step1 && input.type !== '' && input.dose !== 0;
-    const step3 = step2 && input.period !== ''
+    const step3 = step2 && input.period !== '';
+
+    const showSelfInput = input.period === PeriodsName.PERIOD && step2
+    const showCheckBox = input.period === PeriodsName.CHECKBOX && step2
 
     return (
         <ScrollView style={{backgroundColor: '#fff'}}>
@@ -234,10 +239,13 @@ function Add({route, screen, navigation, theme}) {
                     <SelectPeriod themePaper={themePaper} input={input} onSelectPeriod={onSelectPeriod}/>
                 </View>}
                 {/*PERIOD CHECKBOXES WEEK-----------------------------------------------*/}
-                {input.period === PeriodsName.CHECKBOX && step2 &&
-                <View>
+                {showCheckBox &&
+                <View style={{marginTop: 30}}>
                     <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
                 </View>}
+                <View style={{height: showSelfInput ? 'auto' : 0, overflow: 'hidden'}}>
+                    <SelfPeriod input={input} themePaper={themePaper} setInput={setInput} />
+                </View>
                 {/*{step3 && <Divider/>}*/}
                 {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}
                 {step3 && <TimePanel input={input}
@@ -296,6 +304,6 @@ const styles = StyleSheet.create({
         // borderTopWidth: 0.5,
     },
     boxSelect: {
-        marginBottom: 30
+        // marginBottom: 30
     },
 });
