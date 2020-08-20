@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {AsyncStorage, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {connect} from "react-redux";
 import {Button, List} from "react-native-paper";
-import {ADD, HOME} from "../../store/screenNames";
+import {ADD} from "../../store/screenNames";
 import moment from 'moment'
 import {Entypo, FontAwesome} from "@expo/vector-icons";
 import {setOpenSetting} from "../../store/actions";
@@ -20,9 +20,13 @@ function Home({theme, navigation, setOpenSetting}) {
         return await AsyncStorage.getItem('input')
             .then((data) => {
                 if (data !== null) {
-                    let result = (JSON.parse(data)).map((el, key) => ({...el, key}))
+                    let result = (JSON.parse(data))
                     // console.warn(result, 'RESULT')
                     return result.filter(d => (d?.days?.some(dat => (moment(dat).isSame(date, 'days')))))
+                        .map((el, key) => ({
+                            ...el,
+                            key
+                        }))
                 }
             })
     }
@@ -62,9 +66,6 @@ function Home({theme, navigation, setOpenSetting}) {
     }, [])
 
 
-
-
-
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
             <ImageBackground source={require('../../img/empty-bg.png')}
@@ -89,7 +90,7 @@ function Home({theme, navigation, setOpenSetting}) {
                     {/*LIST ALL LIST*/}
                     <List.Section>
                         {list && list.length > 0 &&
-                        <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme} />
+                        <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme}/>
                         }
                         {list && list.length === 0 &&
                         <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>Сегодня ничего принимать

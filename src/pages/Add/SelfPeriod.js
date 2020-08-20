@@ -8,8 +8,7 @@ export default ({themePaper, input, setInput}) => {
             theme={{colors: themePaper.colors}}
             value={String(input.selfPeriod)}
             onChangeText={(e) => {
-                // let val=String(e).replace(/./g, '')
-                setInput({...input, selfPeriod: Number(e)})
+                setInput({...input, selfPeriod: Number(e.toString())})
             }}
             keyboardType={'number-pad'}
             style={{height: 70}}

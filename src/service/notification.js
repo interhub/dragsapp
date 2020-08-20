@@ -32,7 +32,7 @@ const setNotification = async ({
 
     //итоговый массив токенов для удаление и отмены сообщений в дальнейшем
     const title = 'Напоминание о приеме💊⏰';
-    const body = `${name} в количестве ${dose} ${Types.find(el => el.value === type).label}`
+    const body = `${name} в количестве ${dose} ${Types.find(el => el.value === type)?.label||'шт'}`
 
     const timeDecorate = (timeArr) => {
         return timeArr.map((el, id) => {

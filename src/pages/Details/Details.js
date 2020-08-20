@@ -1,15 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AsyncStorage, Dimensions, StyleSheet, View} from 'react-native';
 import {connect} from "react-redux";
-import * as Notifications from 'expo-notifications';
-import {ADD, HOME} from "../../store/screenNames";
-import {Divider, List, TouchableRipple} from "react-native-paper";
-import {SwipeListView} from "react-native-swipe-list-view";
-import ListItem from "./ListItem";
-import RightOk from "../../comps/RightOk";
-import LeftTime from "../../comps/LeftTime";
-import uploadInput from "../../vars/uploadInput";
-import UploadDialog from "../../comps/UploadDialog";
+import {Divider, List} from "react-native-paper";
 import ListAllInputs from "../../comps/ListAllInputs";
 
 const H = Dimensions.get('screen').height;
@@ -27,10 +19,7 @@ function Details({navigation, theme}) {
                 AsyncStorage.getItem('input')
                     .then((data) => {
                         if (data !== null) {
-                            let result = (JSON.parse(data)).map((el, key) => {
-                                el['key'] = key
-                                return el
-                            });
+                            let result = (JSON.parse(data)).map((el, key) => ({...el, key}))    ;
                             setList(result)
                             // console.log(result, 'PRINT')
                         }
@@ -46,7 +35,7 @@ function Details({navigation, theme}) {
                     <List.Subheader>Просмотр всех записей</List.Subheader>
                     <Divider/>
                     {list && list.length > 0 &&
-                    <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme} />
+                    <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme}/>
                     }
                 </List.Section>
             </View>

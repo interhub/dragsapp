@@ -18,19 +18,22 @@ let currentItem = {}
 export default ({list, setList, navigation, theme}) => {
 
     const rowRef = useRef()
-    const removeInput = (el, key) => {
+    const removeInput = async (el, key) => {
         try {
-            let items = [...list];
-            let item = items.find(el => el.key === key) || items[0]
-            let newList = items.filter(el => el.key !== key)
-            setList(newList);
-            item.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
-            AsyncStorage.setItem('input', JSON.stringify(newList));
+            let items = await AsyncStorage.getItem('input')
+            items = items ? JSON.parse(items) : []
+            let item = items[key]
+            console.warn('ITEM KEY=', key, item,)
+            items.splice(key, 1)
+            setList(items);
+            item?.id?.map(str => {
+                Notifications.dismissNotificationAsync(str || '')
+            });
+            AsyncStorage.setItem('input', JSON.stringify(items));
         } catch (e) {
             console.warn(e)
         }
     }
-
     const editInput = (el) => {
         el.id = []
         navigation.jumpTo(HOME, {callback: () => alert('hi')});
@@ -44,9 +47,9 @@ export default ({list, setList, navigation, theme}) => {
         onRowClose={() => {
             close = true
         }}
-        data={list.map((el, key) => ({...el, key}))}
+        data={list}
         swipeRowStyle={{marginTop: 20}}
-        renderItem={({item}) => (
+        renderItem={({item, index}) => (
             <View
                 onTouchStart={() => {
                     currentItem = item;
