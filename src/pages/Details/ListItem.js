@@ -7,7 +7,6 @@ const W = Dimensions.get('window').width
 
 const ListItem = ({
                       theme,
-                      key,
                       num,
                       item,
                       editInput

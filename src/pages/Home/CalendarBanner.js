@@ -48,10 +48,10 @@ const CalendarBanner = ({theme, activeDay, setActiveDay}) => {
         >
             {
                 weeks.map((week, id) => {
-                    return <View style={{width: W, height: 'auto', flexDirection: 'row'}}>
+                    return <View key={id} style={{width: W, height: 'auto', flexDirection: 'row'}}>
                         {week.map((el, id) => {
                             const getThisDate = () => new Date(activeDay).getDate() === new Date(el).getDate();
-                            return <View style={styles.col}>
+                            return <View key={id} style={styles.col}>
                                 <View>
                                     <Text style={styles.text}>
                                         {new Date(el).getDate()}

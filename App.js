@@ -1,6 +1,6 @@
 import {StatusBar} from 'expo-status-bar';
 import React from 'react';
-import {Platform, SafeAreaView, StyleSheet, UIManager} from 'react-native';
+import {AsyncStorage, Platform, SafeAreaView, StyleSheet, UIManager} from 'react-native';
 import {connect, Provider} from "react-redux";
 import store from './src/store/store.js'
 import Home from "./src/pages/Home/Home.js";

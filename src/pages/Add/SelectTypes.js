@@ -3,6 +3,7 @@ import {Dimensions, StyleSheet, View} from 'react-native';
 import {TextInput, TouchableRipple} from "react-native-paper";
 import DialogPicker from "./DialogPicker";
 import types from "../../vars/types";
+import {AntDesign} from "@expo/vector-icons";
 
 const H = Dimensions.get('window').height;
 const W = Dimensions.get('window').width;
@@ -29,10 +30,13 @@ export default ({input, onSelectType, onSelectDose, themePaper}) => {
                         theme={{colors: themePaper.colors}}
                         editable={false}
                         defaultValue={types.find(el => el.value === input.type)?.label || ''}
-                        style={{height: 50}}
+                        style={{height: 70}}
                         label={'Ед. измерения'}
                         placeholder={'Ед. измерения'}
                     />
+                    <View style={{position:'absolute', right:10, bottom: '28%'}} >
+                        <AntDesign name="caretdown" size={8} color="black" />
+                    </View>
                 </View>
             </TouchableRipple>
             <DialogPicker
@@ -49,7 +53,7 @@ export default ({input, onSelectType, onSelectDose, themePaper}) => {
                 keyboardType={'number-pad'}
                 theme={{colors: themePaper.colors}}
                 mode={'flat'}
-                style={{height: 50}}
+                style={{height: 70}}
                 label={'Количество'}
                 onChangeText={onSelectDose}
             />

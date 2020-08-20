@@ -1,25 +1,28 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Button, Dialog, Divider, Portal, TextInput} from 'react-native-paper';
 import {View} from "react-native";
 import moment from "moment";
 import Message from "../../comps/Message";
 
 const TimeDialog = ({
-                        initialTimeObject = {
-                            H: '10',
-                            M: '00'
-                        },
+                        times,
                         themePaper,
                         onSave,
                         visible = true,
                         setVisible,
                         editedNumber = 0
                     }) => {
+
+    const initialTimeObject = {
+        ...times[editedNumber]
+    }
+
     const hide = () => {
         setVisible(false)
     }
     const save = () => {
+        console.warn(ramTime.H, ramTime.M, editedNumber, 'editedNumber and ram')
         if (!moment(`${ramTime.H}:${ramTime.M}`, 'HH:mm').isValid()) {
             return Message('Некорректное время')
         }
@@ -27,7 +30,12 @@ const TimeDialog = ({
         hide()
     }
 
-    const [ramTime, setRamTime] = useState(initialTimeObject)
+    const [ramTime, setRamTime] = useState({H: '0', M: '0'})
+
+    useEffect(() => {
+        setRamTime({...initialTimeObject})
+        console.warn(initialTimeObject, 'set first')
+    }, [visible])
 
     return (
         <Portal>

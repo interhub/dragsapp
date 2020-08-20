@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {AsyncStorage, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {connect} from "react-redux";
 import {Button, List, TouchableRipple} from "react-native-paper";
@@ -13,7 +13,6 @@ import * as Notifications from "expo-notifications";
 import RightOk from "../../comps/RightOk";
 import LeftTime from "../../comps/LeftTime";
 import uploadInput from "../../vars/uploadInput";
-import UploadDialog from "../../comps/UploadDialog";
 
 const H = Dimensions.get('screen').height
 const W = Dimensions.get('screen').width
@@ -27,11 +26,8 @@ function Home({theme, navigation, setOpenSetting}) {
         return await AsyncStorage.getItem('input')
             .then((data) => {
                 if (data !== null) {
-                    let result = (JSON.parse(data)).map((el, key) => {
-                        el['key'] = key
-                        return el
-                    })
-                    // console.log(result, 'RESULT')
+                    let result = (JSON.parse(data)).map((el, key) => ({...el,key}))
+                    console.warn(result, 'RESULT')
                     return result.filter(d => (d?.days?.some(dat => (moment(dat).isSame(date, 'days')))))
                 }
             })
@@ -64,14 +60,12 @@ function Home({theme, navigation, setOpenSetting}) {
         });
 
         //UPDATE NEW LIST !!!
-        navigation.addListener('focus',()=>{
+        navigation.addListener('focus', () => {
             (async () => {
                 setList(await getListOnDay(activeDay))
             })()
         })
     }, [])
-
-
 
 
     const editInput = (el) => {
@@ -96,44 +90,41 @@ function Home({theme, navigation, setOpenSetting}) {
         AsyncStorage.setItem('input', JSON.stringify(items));
     }
 
-    const [visibleDialog, setVisibleDialog] = useState(false)
-    const [visibleDelete, setVisibleDelete] = useState(false);
-
+    // const [visibleDialog, setVisibleDialog] = useState(false)
+    // const [visibleDelete, setVisibleDelete] = useState(false);
     const rowRef = useRef()
-
-    // const now = moment().format('DD - MMMM, hh:mm');
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
-            <UploadDialog
-                title={'Завершить напомниание'}
-                text={'Напомнить через 30 минут?'}
-                back={() => {
-                    rowRef.current.safeCloseOpenRow();
-                }}
-                setVisible={setVisibleDialog}
-                visible={visibleDialog}
-                callback={() => {
-                    uploadInput(currentItem)
-                    removeInput(currentItem, currentItem.key)
-                }}/>
-            <UploadDialog
-                title={'Удалить'}
-                text={'Напомнание будет удалено'}
-                back={() => {
-                    rowRef.current.safeCloseOpenRow();
-                }}
-                setVisible={setVisibleDelete}
-                visible={visibleDelete}
-                callback={() => {
-                    removeInput(currentItem, currentItem.key)
-                }}/>
+            {/*<UploadDialog*/}
+            {/*    title={'Завершить напомниание'}*/}
+            {/*    text={'Напомнить через 30 минут?'}*/}
+            {/*    back={() => {*/}
+            {/*        rowRef.current.safeCloseOpenRow();*/}
+            {/*    }}*/}
+            {/*    setVisible={setVisibleDialog}*/}
+            {/*    visible={visibleDialog}*/}
+            {/*    callback={() => {*/}
+            {/*        uploadInput(currentItem)*/}
+            {/*        removeInput(currentItem, currentItem.key)*/}
+            {/*    }}/>*/}
+            {/*<UploadDialog*/}
+            {/*    title={'Удалить'}*/}
+            {/*    text={'Напомнание будет удалено'}*/}
+            {/*    back={() => {*/}
+            {/*        rowRef.current.safeCloseOpenRow();*/}
+            {/*    }}*/}
+            {/*    setVisible={setVisibleDelete}*/}
+            {/*    visible={visibleDelete}*/}
+            {/*    callback={() => {*/}
+            {/*        removeInput(currentItem, currentItem.key)*/}
+            {/*    }}/>*/}
             <ImageBackground source={require('../../img/empty-bg.png')}
                              style={[styles.imageBox, {backgroundColor: theme.bg}]}
                              imageStyle={styles.image}>
                 <CalendarBanner activeDay={activeDay} setActiveDay={setActiveDay} theme={theme}/>
                 <View>
                     {list && list.length > 0 &&
-                    <Text style={{textAlign: 'center', backgroundColor: theme.navBg, color: '#fff', padding: 32}}>
+                    <Text style={{textAlign: 'center', backgroundColor: theme.navBg, color: '#fff', padding: 20, fontWeight:'bold', fontSize:16}}>
                         Для управления уведомлениями используйте свайп влево или вправо
                     </Text>}
                 </View>
@@ -145,7 +136,7 @@ function Home({theme, navigation, setOpenSetting}) {
                             onRowClose={() => {
                                 close = true
                             }}
-                            data={list}
+                            data={list.map((el, key) => ({...el, key}))}
                             swipeRowStyle={{marginTop: 20}}
                             renderItem={({item}) => (
                                 <View
@@ -153,7 +144,6 @@ function Home({theme, navigation, setOpenSetting}) {
                                         currentItem = item;
                                     }}>
                                     <ListItem theme={theme}
-                                              key={item.key}
                                               item={item}
                                               editInput={() => editInput(item)}
                                     />
@@ -183,35 +173,46 @@ function Home({theme, navigation, setOpenSetting}) {
                             onLeftActionStatusChange={({isActivated}) => {
                                 if (close && isActivated) {
                                     close = false
-                                    setVisibleDialog(true)
-                                    console.warn('open', isActivated)
+                                    // setVisibleDialog(true)
+                                    if (rowRef.current)
+                                        rowRef.current.safeCloseOpenRow();
+                                    // console.warn(currentItem,currentItem.key,'all')
+                                    uploadInput(currentItem)
+                                    removeInput(currentItem, currentItem.key)
+                                    // console.warn('open', isActivated)
                                 }
                             }}
                             onRightActionStatusChange={({isActivated}) => {
                                 if (close && isActivated) {
                                     close = false
-                                    setVisibleDelete(true)
-                                    console.warn('open')
+                                    // setVisibleDelete(true)
+
+                                    if (rowRef.current)
+                                        rowRef.current.safeCloseOpenRow();
+                                    removeInput(currentItem, currentItem.key)
+                                    // console.warn('open')
                                 }
                             }}
                             keyExtractor={(item, index) => index.toString()}
 
-                            leftActivationValue={W - 100}
-                            leftActionValue={W - 100}
-                            leftOpenValue={W - 100}
+                            leftActivationValue={W}
+                            leftActionValue={W}
+                            leftOpenValue={W}
 
-                            rightActivationValue={-W + 100}
-                            rightActionValue={-W + 100}
-                            rightOpenValue={-W + 100}
+                            rightActivationValue={-W}
+                            rightActionValue={-W}
+                            rightOpenValue={-W}
                         />}
                         {list && list.length === 0 &&
-                        <Text style={{textAlign: 'center'}}>Сегодня ничего принимать не нужно</Text>}
+                        <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>Сегодня ничего принимать
+                            не нужно</Text>}
                     </List.Section>
                 </View>
-                <Button color={theme.darkblue}
+                <Button color={theme.topBg}
                         contentStyle={{height: '100%'}}
                         icon={() => <Entypo name="plus" size={24} color="#fff"/>}
                         mode="contained"
+                        labelStyle={{color: '#fff'}}
                         style={styles.btnAdd}
                         onPress={() =>
                             navigation.navigate(ADD)

@@ -15,6 +15,7 @@ import DaysCheckbox from "./DaysCheckbox";
 import TimePanel from "./TimePanel";
 import Message from "../../comps/Message";
 import typesName from "../../vars/typesName";
+import moment from "moment";
 
 const H = Dimensions.get('screen').height;
 
@@ -56,6 +57,11 @@ function Add({route, screen, navigation, theme}) {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
         }
     }, [])
+    const sortByTime = (items) => {
+        return items.sort((a, b) => {
+            return moment(`${a.H}:${a.M}`, 'HH:mm').valueOf() - moment(`${b.H}:${b.M}`, 'HH:mm').valueOf()
+        }).map((el, key) => ({...el, key}))
+    }
 
     //изменение имени препарата
     const nameInput = (txt) => {
@@ -66,6 +72,7 @@ function Add({route, screen, navigation, theme}) {
     const addTime = (H, M) => {
         let items = [...input.time];
         items.push({H, M, key: Math.max(...input.time.map(el => el.key)) + 1})
+        items = sortByTime(items)
         setInput({...input, time: items})
         LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
     }
@@ -84,6 +91,7 @@ function Add({route, screen, navigation, theme}) {
         let time = [...input.time]
         let index = time.findIndex(el => el.key === key)
         time[index] = {H, M}
+        time = sortByTime(time)
         setInput({...input, time})
     }
     //изменение периода
@@ -218,11 +226,11 @@ function Add({route, screen, navigation, theme}) {
                 </View>
                 {/*SELECT PERIOD-----------------------------------------------*/}
                 {step2 && <View style={styles.boxSelect}>
-                    {step3 && <HelperText type={'info'}
-                                          style={{marginLeft: 4}}
-                                          visible={'hello'}>
+                    <HelperText type={'info'}
+                                style={{marginLeft: 4, marginBottom: -10}}
+                                visible={step3}>
                         Расписание
-                    </HelperText>}
+                    </HelperText>
                     <SelectPeriod themePaper={themePaper} input={input} onSelectPeriod={onSelectPeriod}/>
                 </View>}
                 {/*PERIOD CHECKBOXES WEEK-----------------------------------------------*/}
@@ -230,9 +238,9 @@ function Add({route, screen, navigation, theme}) {
                 <View>
                     <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
                 </View>}
-                {step2 && <Divider/>}
+                {step3 && <Divider/>}
                 {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}
-                {step2 && <TimePanel input={input}
+                {step3 && <TimePanel input={input}
                                      themePaper={themePaper}
                                      removeTime={removeTime}
                                      theme={theme}

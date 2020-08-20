@@ -11,6 +11,7 @@ const ListMoveItem = ({setEditionNumber, editedNumber, updatePicker, theme, time
     return (
         <List.Item
             onPress={() => {
+                console.warn(num)
                 setEditionNumber(num)
                 updatePicker()
             }}

@@ -19,11 +19,14 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) 
     return (
         <View>
             <TimeDialog visible={visibleSelect}
+                        times={input.time}
                         onSave={addTime}
                         setVisible={setVisibleSelect}
+                        editedNumber={editedNumber}
                         themePaper={themePaper}/>
             <TimeDialog visible={visibleSelectUpdate}
-                        initialTimeObject={input.time[editedNumber]}
+                        times={input.time}
+                        editedNumber={editedNumber}
                         onSave={(H, M) => {
                             updateTime(H, M, updateKey)
                         }}
@@ -31,7 +34,7 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) 
                         themePaper={themePaper}/>
             <List.Section>
                 {/*<List.Subheader>Сколько раз в день</List.Subheader>*/}
-                <HelperText type={'info'} visible={'hello'}>
+                <HelperText type={'info'} visible={true}>
                     Сколько раз в день
                 </HelperText>
                 <List.Item
@@ -53,26 +56,26 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) 
                                        icon="minus"
                                        color={theme.navBg}/>
                         </TouchableRipple>}/>
-                <Divider/>
+                {/*<Divider/>*/}
                 {/*СНОВНОЙ СПИСОК*/}
                 {/*<List.Subheader>Ваше расписание</List.Subheader>*/}
-                <HelperText type={'info'} visible={'hello'}>
+                <HelperText type={'info'} visible={true}>
                     Ваше расписание
                 </HelperText>
                 <SwipeListView
                     useNativeDriver={false}
                     data={input.time}
                     disableRightSwipe
-                    renderItem={({item}) => (
+                    renderItem={({item, index}) => (
                         <View>
                             <ListMoveItem theme={theme}
-                                          key={item.key}
-                                          num={item.key}
+                                          key={index}
+                                          num={index}
                                           editedNumber={editedNumber}
                                           time={item}
                                           updatePicker={() => {
                                               setVisibleSelectUpdate(true)
-                                              setUpdateKey(item.key)
+                                              setUpdateKey(index)
                                           }}
                                           setEditionNumber={setEditionNumber}
                             />
