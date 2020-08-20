@@ -9,7 +9,7 @@ export default ({themePaper, input, setInput}) => {
             value={String(input.selfPeriod)}
             onChangeText={(e) => {
                 // let val=String(e).replace(/./g, '')
-                setInput({...input, selfPeriod: Number(e )})
+                setInput({...input, selfPeriod: Number(e)})
             }}
             keyboardType={'number-pad'}
             style={{height: 70}}

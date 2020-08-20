@@ -47,12 +47,6 @@ function Details({navigation, theme}) {
     }
 
     const removeInput = (el, key) => {
-        // LayoutAnimation.configureNext({
-        //     duration: 700,
-        //     create: {type: 'linear', property: 'opacity'},
-        //     update: {type: 'spring', springDamping: 0.5},
-        //     delete: {type: 'linear', property: 'scaleXY'}
-        // })
         let items = [...list];
         let item = items.find(el => el.key === key)
         let newList = items.filter(el => el.key !== key);
@@ -141,15 +135,18 @@ function Details({navigation, theme}) {
                         onLeftActionStatusChange={({isActivated}) => {
                             if (close && isActivated) {
                                 close = false
-                                setVisibleDialog(true)
-                                console.warn('open')
+                                if (rowRef.current)
+                                    rowRef.current.safeCloseOpenRow();
+                                uploadInput(currentItem)
+                                removeInput(currentItem, currentItem.key)
                             }
                         }}
                         onRightActionStatusChange={({isActivated}) => {
                             if (close && isActivated) {
                                 close = false
-                                setVisibleDelete(true)
-                                console.warn('open')
+                                if (rowRef.current)
+                                    rowRef.current.safeCloseOpenRow();
+                                removeInput(currentItem, currentItem.key)
                             }
                         }}
                         keyExtractor={(item, index) => index.toString()}

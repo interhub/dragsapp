@@ -26,7 +26,7 @@ function Home({theme, navigation, setOpenSetting}) {
         return await AsyncStorage.getItem('input')
             .then((data) => {
                 if (data !== null) {
-                    let result = (JSON.parse(data)).map((el, key) => ({...el,key}))
+                    let result = (JSON.parse(data)).map((el, key) => ({...el, key}))
                     console.warn(result, 'RESULT')
                     return result.filter(d => (d?.days?.some(dat => (moment(dat).isSame(date, 'days')))))
                 }
@@ -85,46 +85,33 @@ function Home({theme, navigation, setOpenSetting}) {
         // })
         let items = [...list];
         let item = items.find(el => el.key === key)
-        setList(items.filter(el => el.key !== key));
+        console.warn('REMOVED', item,)
+        let newList = items.filter(el => el.key !== key)
+        setList(newList);
         item.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
-        AsyncStorage.setItem('input', JSON.stringify(items));
+        AsyncStorage.setItem('input', JSON.stringify(newList));
     }
-
+    console.warn(list.length, 'LEN')
     // const [visibleDialog, setVisibleDialog] = useState(false)
     // const [visibleDelete, setVisibleDelete] = useState(false);
     const rowRef = useRef()
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
-            {/*<UploadDialog*/}
-            {/*    title={'Завершить напомниание'}*/}
-            {/*    text={'Напомнить через 30 минут?'}*/}
-            {/*    back={() => {*/}
-            {/*        rowRef.current.safeCloseOpenRow();*/}
-            {/*    }}*/}
-            {/*    setVisible={setVisibleDialog}*/}
-            {/*    visible={visibleDialog}*/}
-            {/*    callback={() => {*/}
-            {/*        uploadInput(currentItem)*/}
-            {/*        removeInput(currentItem, currentItem.key)*/}
-            {/*    }}/>*/}
-            {/*<UploadDialog*/}
-            {/*    title={'Удалить'}*/}
-            {/*    text={'Напомнание будет удалено'}*/}
-            {/*    back={() => {*/}
-            {/*        rowRef.current.safeCloseOpenRow();*/}
-            {/*    }}*/}
-            {/*    setVisible={setVisibleDelete}*/}
-            {/*    visible={visibleDelete}*/}
-            {/*    callback={() => {*/}
-            {/*        removeInput(currentItem, currentItem.key)*/}
-            {/*    }}/>*/}
             <ImageBackground source={require('../../img/empty-bg.png')}
                              style={[styles.imageBox, {backgroundColor: theme.bg}]}
                              imageStyle={styles.image}>
                 <CalendarBanner activeDay={activeDay} setActiveDay={setActiveDay} theme={theme}/>
                 <View>
                     {list && list.length > 0 &&
-                    <Text style={{textAlign: 'center', backgroundColor: theme.navBg, color: '#fff', padding: 20, fontWeight:'bold', fontSize:16}}>
+                    <Text style={{
+                        textAlign: 'center',
+                        backgroundColor: theme.navBg,
+                        width: W,
+                        color: '#fff',
+                        padding: 20,
+                        fontWeight: 'bold',
+                        fontSize: 16
+                    }}>
                         Для управления уведомлениями используйте свайп влево или вправо
                     </Text>}
                 </View>
@@ -173,24 +160,18 @@ function Home({theme, navigation, setOpenSetting}) {
                             onLeftActionStatusChange={({isActivated}) => {
                                 if (close && isActivated) {
                                     close = false
-                                    // setVisibleDialog(true)
                                     if (rowRef.current)
                                         rowRef.current.safeCloseOpenRow();
-                                    // console.warn(currentItem,currentItem.key,'all')
                                     uploadInput(currentItem)
                                     removeInput(currentItem, currentItem.key)
-                                    // console.warn('open', isActivated)
                                 }
                             }}
                             onRightActionStatusChange={({isActivated}) => {
                                 if (close && isActivated) {
                                     close = false
-                                    // setVisibleDelete(true)
-
                                     if (rowRef.current)
                                         rowRef.current.safeCloseOpenRow();
                                     removeInput(currentItem, currentItem.key)
-                                    // console.warn('open')
                                 }
                             }}
                             keyExtractor={(item, index) => index.toString()}
