@@ -76,20 +76,17 @@ function Home({theme, navigation, setOpenSetting}) {
         }, 300)
     }
     const removeInput = (el, key) => {
-        // console.warn(el,key)
-        // LayoutAnimation.configureNext({
-        //     duration: 700,
-        //     create: {type: 'linear', property: 'opacity'},
-        //     update: {type: 'spring', springDamping: 0.5},
-        //     delete: {type: 'linear', property: 'scaleXY'}
-        // })
-        let items = [...list];
-        let item = items.find(el => el.key === key)
-        console.warn('REMOVED', item,)
-        let newList = items.filter(el => el.key !== key)
-        setList(newList);
-        item.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
-        AsyncStorage.setItem('input', JSON.stringify(newList));
+        try {
+            let items = [...list];
+            let item = items.find(el => el.key === key) || items[0]
+            alert('REMOVED' + item.id)
+            let newList = items.filter(el => el.key !== key)
+            setList(newList);
+            item.id.forEach(str => Notifications.dismissAllNotificationsAsync(str));
+            AsyncStorage.setItem('input', JSON.stringify(newList));
+        } catch (e) {
+            console.warn(e)
+        }
     }
     console.warn(list.length, 'LEN')
     // const [visibleDialog, setVisibleDialog] = useState(false)

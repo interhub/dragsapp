@@ -47,12 +47,16 @@ function Details({navigation, theme}) {
     }
 
     const removeInput = (el, key) => {
-        let items = [...list];
-        let item = items.find(el => el.key === key)
-        let newList = items.filter(el => el.key !== key);
-        setList(newList);
-        item.id.forEach(str => Notifications.cancelScheduledNotificationAsync(str));
-        AsyncStorage.setItem('input', JSON.stringify(newList));
+        try {
+            let items = [...list];
+            let item = items.find(el => el.key === key) || items[0]
+            let newList = items.filter(el => el.key !== key);
+            setList(newList);
+            item.id.forEach(str => Notifications.cancelScheduledNotificationAsync(str));
+            AsyncStorage.setItem('input', JSON.stringify(newList));
+        } catch (e) {
+            console.warn(e)
+        }
     }
 
     const rowRef = useRef()
@@ -90,7 +94,7 @@ function Details({navigation, theme}) {
                 <List.Section>
                     <List.Subheader>Просмотр всех записей</List.Subheader>
                     <Divider/>
-                    {list.length > 0 &&
+                    {list.length > 0 && list &&
                     <SwipeListView
                         ListFooterComponent={
                             <View style={{height: 300}}/>
@@ -151,13 +155,13 @@ function Details({navigation, theme}) {
                         }}
                         keyExtractor={(item, index) => index.toString()}
 
-                        leftActivationValue={W - 100}
-                        leftActionValue={W - 100}
-                        leftOpenValue={W - 100}
+                        leftActivationValue={W }
+                        leftActionValue={W }
+                        leftOpenValue={W }
 
-                        rightActivationValue={-W + 100}
-                        rightActionValue={-W + 100}
-                        rightOpenValue={-W + 100}
+                        rightActivationValue={-W }
+                        rightActionValue={-W }
+                        rightOpenValue={-W }
                     />}
                 </List.Section>
             </View>
