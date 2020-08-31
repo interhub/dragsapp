@@ -8,6 +8,7 @@ import {Entypo, FontAwesome} from "@expo/vector-icons";
 import {setOpenSetting} from "../../store/actions";
 import CalendarBanner from "./CalendarBanner";
 import ListAllInputs from "../../comps/ListAllInputs";
+import * as Notifications from "expo-notifications";
 
 const H = Dimensions.get('screen').height
 const W = Dimensions.get('screen').width
@@ -17,6 +18,8 @@ function Home({theme, navigation, setOpenSetting}) {
     const [list, setList] = useState([]);
 
     const getListOnDay = async (date) => {
+        //TODO 1. найти из планирования все позиции с сегодняшней датой, найти из памяти все позиции с данным идентификатором 3. добавить в список (при удалении из планирования по id оно перестанет появляться)
+
         return await AsyncStorage.getItem('input')
             .then((data) => {
                 if (data !== null) {
@@ -65,6 +68,28 @@ function Home({theme, navigation, setOpenSetting}) {
         })
     }, [])
 
+    const removeInputTodayOnly = async (el, key) => {
+        try {
+            //TODO 1. убрать все уведомления по времени на сегодня 2. просмотреть наличие уведомлений по данному напоминанию на сегодня 2. убрать иднетификатор уведомления из списка в input  сохранить в стор, перезаписать лист,
+            let items = await AsyncStorage.getItem('input')
+            items = items ? JSON.parse(items) : []
+            let item = items[key]
+            let info = (await Notifications.getAllScheduledNotificationsAsync())?.filter((el,id)=>{
+                console.log(new Date(el.trigger.value).toLocalString())
+                return moment(el.trigger.value).isSame(activeDay, 'days')
+            })
+
+            return console.warn('ITEM KEY=', info,key, item,)
+            items.splice(key, 1)
+            setList(items)
+            item?.id?.map(str => {
+                Notifications.dismissNotificationAsync(str || '')
+            });
+            AsyncStorage.setItem('input', JSON.stringify(items));
+        } catch (e) {
+            console.warn(e)
+        }
+    }
 
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
@@ -90,7 +115,7 @@ function Home({theme, navigation, setOpenSetting}) {
                     {/*LIST ALL LIST*/}
                     <List.Section>
                         {list && list.length > 0 &&
-                        <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme}/>
+                        <ListAllInputs list={list} setList={setList} removeInput={removeInputTodayOnly} navigation={navigation} theme={theme}/>
                         }
                         {list && list.length === 0 &&
                         <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>Сегодня ничего принимать

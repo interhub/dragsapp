@@ -28,9 +28,18 @@ const CalendarBanner = ({theme, activeDay, setActiveDay}) => {
 
     const getArrayDateByDate = (date) => {
         let now = date.valueOf()
-        let backDay = new Date(now).setDate(new Date(now).getDate() - 1)
-        let next = Array(5).fill(1).map((_, i) => new Date(now).setDate(new Date(now).getDate() + 1 + i))
-        return ([backDay, now, ...next])
+        let firstMonday
+        Array(6).fill(1).map((_, id) => {
+            let date = new Date(now).setDate(new Date(now).getDate() - id)
+            let isFirst = new Date(date).getDay() === 1
+            if (isFirst) {
+                firstMonday = date
+            }
+        })
+        //1- пн 2-вт 3-ср 4-чт 5-пт 6-сб 7-вск
+        let firstDayIndex = new Date(firstMonday).getDay() === 0 ? 7 : new Date(now).getDay()
+        let next = Array(7-firstDayIndex).fill(1).map((_, i) => new Date(now).setDate(new Date(now).getDate() + 1 + i))
+        return ([firstMonday, ...next])
     }
 
     const scroll = useRef(null)

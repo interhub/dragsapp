@@ -3,6 +3,7 @@ import {AsyncStorage, Dimensions, StyleSheet, View} from 'react-native';
 import {connect} from "react-redux";
 import {Divider, List} from "react-native-paper";
 import ListAllInputs from "../../comps/ListAllInputs";
+import * as Notifications from "expo-notifications";
 
 const H = Dimensions.get('screen').height;
 const W = Dimensions.get('screen').width;
@@ -28,6 +29,23 @@ function Details({navigation, theme}) {
         });
     }, []);
 
+    const removeInput = async (el, key) => {
+        try {
+            let items = await AsyncStorage.getItem('input')
+            items = items ? JSON.parse(items) : []
+            let item = items[key]
+            console.warn('ITEM KEY=', key, item,)
+            items.splice(key, 1)
+            setList(items)
+            item?.id?.map(str => {
+                Notifications.dismissNotificationAsync(str || '')
+            });
+            AsyncStorage.setItem('input', JSON.stringify(items));
+        } catch (e) {
+            console.warn(e)
+        }
+    }
+
     return (
         <View>
             <View style={styles.container}>
@@ -35,7 +53,7 @@ function Details({navigation, theme}) {
                     <List.Subheader>Просмотр всех записей</List.Subheader>
                     <Divider/>
                     {list && list.length > 0 &&
-                    <ListAllInputs list={list} setList={setList} navigation={navigation} theme={theme}/>
+                    <ListAllInputs list={list} removeInput={removeInput} navigation={navigation} theme={theme}/>
                     }
                 </List.Section>
             </View>
