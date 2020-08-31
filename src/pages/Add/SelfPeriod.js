@@ -6,9 +6,10 @@ export default ({themePaper, input, setInput}) => {
     return <View style={{padding: 5}}>
         <TextInput
             theme={{colors: themePaper.colors}}
-            value={String(input.selfPeriod)}
-            onChange={({ nativeEvent: { text} }) => {
-                setInput({...input, selfPeriod: Number(text)})
+            defaultValue={String(input.selfPeriod)}
+            onChangeText={(selfPeriodString) => {
+                // return console.warn(selfPeriodString)
+                setInput({...input, selfPeriod: parseInt(selfPeriodString.toString())})
             }}
             keyboardType={'number-pad'}
             style={{height: 70}}

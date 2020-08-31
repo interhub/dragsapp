@@ -204,7 +204,7 @@ function Add({route, screen, navigation, theme}) {
 
     const step1 = input.name !== '';
     const step2 = step1 && input.type !== '' && input.dose !== 0;
-    const step3 = step2 && input.period !== '';
+    const step3 = step2 && input.period !== '' && input.selfPeriod > 0;
 
     const showSelfInput = input.period === PeriodsName.PERIOD && step2
     const showCheckBox = input.period === PeriodsName.CHECKBOX && step2
@@ -246,7 +246,7 @@ function Add({route, screen, navigation, theme}) {
                     <DaysCheckbox changeCheckbox={changeCheckbox} daysWeek={input.daysWeek}/>
                 </View>}
                 <View style={{height: showSelfInput ? 'auto' : 0, overflow: 'hidden'}}>
-                    <SelfPeriod input={input} themePaper={themePaper} setInput={setInput} />
+                    <SelfPeriod input={input} themePaper={themePaper} setInput={setInput}/>
                 </View>
                 {/*{step3 && <Divider/>}*/}
                 {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}

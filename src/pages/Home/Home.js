@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {AsyncStorage, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {AsyncStorage, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View, LayoutAnimation } from 'react-native';
 import {connect} from "react-redux";
 import {Button, List} from "react-native-paper";
 import {ADD} from "../../store/screenNames";
