@@ -16,31 +16,32 @@ const W = Dimensions.get('screen').width
 
 function Home({theme, navigation, setOpenSetting}) {
     const [list, setList] = useState([]);
-
     const getListOnDay = async (date) => {
         //TODO 1. найти из планирования все позиции с сегодняшней датой, найти из памяти все позиции с данным идентификатором 3. добавить в список (при удалении из планирования по id оно перестанет появляться)
-
+        //возвращать новую сущность (объект input с массивом из одного времени)
+        let actualItemsIdentifers = (await Notifications.getAllScheduledNotificationsAsync())?.filter((el, id) => {
+            return moment(el.trigger.value).isSame(activeDay, 'days')
+        })
         return await AsyncStorage.getItem('input')
             .then((data) => {
                 if (data !== null) {
                     let result = (JSON.parse(data))
-                    // console.warn(result, 'RESULT')
-                    return result.filter(d => (d?.days?.some(dat => (moment(dat).isSame(date, 'days')))))
-                        .map((el, key) => ({
-                            ...el,
+                    return actualItemsIdentifers.map(({identifier, trigger: {value}}, key) => {
+                        let actualStore = result.find((el) => el.id.includes(identifier)) || {}
+                        return {
+                            ...actualStore,
+                            identifier,
+                            value,
+                            time: [{H: new Date(value).getHours(), M: new Date(value).getMinutes()}],
                             key
-                        }))
+                        }
+                    }).sort((a, b) => a.value - b.value)
                 }
             })
     }
 
     const [activeDay, setActiveDay] = useState(Date.now())
 
-    useEffect(() => {
-        (async () => {
-            setList(await getListOnDay(activeDay))
-        })()
-    }, [activeDay])
 
     useEffect(() => {
         navigation.setOptions({
@@ -62,30 +63,38 @@ function Home({theme, navigation, setOpenSetting}) {
 
         //UPDATE NEW LIST !!!
         navigation.addListener('focus', () => {
-            (async () => {
-                setList(await getListOnDay(activeDay))
-            })()
+            updateList()
         })
     }, [])
+
+    const updateList = () => (async () => {
+        setList(await getListOnDay(activeDay))
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    })()
+
+    useEffect(() => {
+        updateList()
+    }, [activeDay])
 
     const removeInputTodayOnly = async (el, key) => {
         try {
             //TODO 1. убрать все уведомления по времени на сегодня 2. просмотреть наличие уведомлений по данному напоминанию на сегодня 2. убрать иднетификатор уведомления из списка в input  сохранить в стор, перезаписать лист,
-            let items = await AsyncStorage.getItem('input')
-            items = items ? JSON.parse(items) : []
-            let item = items[key]
-            let info = (await Notifications.getAllScheduledNotificationsAsync())?.filter((el,id)=>{
-                console.log(new Date(el.trigger.value).toLocalString())
-                return moment(el.trigger.value).isSame(activeDay, 'days')
-            })
-
-            return console.warn('ITEM KEY=', info,key, item,)
-            items.splice(key, 1)
-            setList(items)
-            item?.id?.map(str => {
-                Notifications.dismissNotificationAsync(str || '')
-            });
-            AsyncStorage.setItem('input', JSON.stringify(items));
+            // let items = await AsyncStorage.getItem('input')
+            // items = items ? JSON.parse(items) : []
+            // let item = items[key]
+            //
+            // let actualItems = (await Notifications.getAllScheduledNotificationsAsync())?.filter((el, id) => {
+            //     return moment(el.trigger.value).isSame(activeDay, 'days')
+            // })
+            // return console.warn('ITEM KEY=', actualItems, key, item,)
+            // items.splice(key, 1)
+            // setList(items)
+            // item?.id?.map(str => {
+            //     Notifications.dismissNotificationAsync(str || '')
+            // });
+            // await AsyncStorage.setItem('input', JSON.stringify(items));
+            await Notifications.cancelScheduledNotificationAsync(el.identifier || '')
+            updateList()
         } catch (e) {
             console.warn(e)
         }
@@ -115,7 +124,8 @@ function Home({theme, navigation, setOpenSetting}) {
                     {/*LIST ALL LIST*/}
                     <List.Section>
                         {list && list.length > 0 &&
-                        <ListAllInputs list={list} setList={setList} removeInput={removeInputTodayOnly} navigation={navigation} theme={theme}/>
+                        <ListAllInputs list={list} setList={setList} removeInput={removeInputTodayOnly}
+                                       navigation={navigation} theme={theme}/>
                         }
                         {list && list.length === 0 &&
                         <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>Сегодня ничего принимать
