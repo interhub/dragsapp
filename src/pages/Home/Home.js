@@ -10,21 +10,21 @@ import {
     View
 } from 'react-native';
 import {connect} from "react-redux";
-import {Button, List} from "react-native-paper";
-import {ADD} from "../../store/screenNames";
+import {List} from "react-native-paper";
 import moment from 'moment'
 import {Entypo, FontAwesome} from "@expo/vector-icons";
-import {setOpenSetting, setUpdateCount} from "../../store/actions";
+import {setLoadingAction, setOpenSetting, setUpdateCount} from "../../store/actions";
 import CalendarBanner from "./CalendarBanner";
 import ListAllInputs from "../../comps/ListAllInputs";
 import * as Notifications from "expo-notifications";
 import AddBtn from "../../comps/AddBtn";
+import Loader from "../../comps/Loader";
 
 const H = Dimensions.get('screen').height
 const W = Dimensions.get('screen').width
 
 
-function Home({theme, navigation, setOpenSetting, counter}) {
+function Home({theme, navigation, setOpenSetting, counter, setLoadingAction}) {
     const [list, setList] = useState([]);
 
     const getListOnDay = async (date) => {
@@ -81,7 +81,9 @@ function Home({theme, navigation, setOpenSetting, counter}) {
 
     const updateList = () => (async () => {
         console.warn('update list home',)
+        setLoadingAction(true)
         setList(await getListOnDay(activeDay))
+        setLoadingAction(false)
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     })()
 
@@ -119,23 +121,26 @@ function Home({theme, navigation, setOpenSetting, counter}) {
                         Для управления уведомлениями используйте свайп влево или вправо
                     </Text>}
                 </View>
+
                 <View style={{flex: 1, width: '100%', marginVertical: -10}}>
+
                     {/*LIST ALL LIST*/}
                     <List.Section>
+                        <View style={styles.loaderContainer} >
+                            <Loader/>
+                        </View>
                         {list && list.length > 0 &&
                         <ListAllInputs list={list} setList={setList} removeInput={removeInputTodayOnly}
-                                       navigation={navigation} theme={theme}/>
-                        }
+                                       navigation={navigation} theme={theme}/>}
                         {list && list.length === 0 && <View>
                             <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>
                                 Сегодня ничего
                                 принимать
                                 не нужно</Text>
-                            <View style={{paddingHorizontal:20, marginTop: 100}} >
+                            <View style={{paddingHorizontal: 20, marginTop: 100}}>
                                 <AddBtn/>
                             </View>
-                        </View>
-                        }
+                        </View>}
                     </List.Section>
                 </View>
 
@@ -150,7 +155,8 @@ const mapStateToProps = (state) => ({
 })
 const mapDispatchToProps = {
     setOpenSetting,
-    setUpdateCount
+    setUpdateCount,
+    setLoadingAction
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
@@ -178,5 +184,10 @@ const styles = StyleSheet.create({
         // marginBottom: H * 0.1,
         // position: 'absolute',
         // bottom: 0.1 * H
+    },
+    loaderContainer:{
+        width:'100%',
+        position:'absolute',
+
     }
 });

@@ -4,5 +4,6 @@ export default {
   name: '',
   theme: {...LightTheme},
   openSetting: false,
-  counter: 0
+  counter: 0,
+  load: false
 };

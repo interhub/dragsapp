@@ -49,7 +49,7 @@ export default ({list, navigation, theme, removeInput}) => {
             close = true
         }}
         data={list}
-        swipeRowStyle={{marginTop: 20}}
+        swipeRowStyle={{marginTop: 30}}
         renderItem={({item, index}) => (
             <View
                 onTouchStart={() => {
@@ -82,8 +82,6 @@ export default ({list, navigation, theme, removeInput}) => {
                 </View>
             </View>
         )}
-        // style={{ flex:1}}
-
         onLeftActionStatusChange={({isActivated}) => {
             if (close && isActivated) {
                 close = false

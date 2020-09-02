@@ -17,6 +17,8 @@ import typesName from "../../vars/typesName";
 import moment from "moment";
 import SelfPeriod from "./SelfPeriod";
 import removeFullInput from "../../vars/removeFullInput";
+import Loader from "../../comps/Loader";
+import {setLoadingAction} from "../../store/actions";
 
 const H = Dimensions.get('screen').height;
 
@@ -46,7 +48,7 @@ const themePaper = {
 };
 
 
-function Add({route, screen, navigation, theme}) {
+function Add({route, screen, navigation, theme, setLoadingAction}) {
     const edit = route?.params?.edit;
     //состояние данных ввода
     const [input, setInput] = useState(initialInput)
@@ -183,6 +185,7 @@ function Add({route, screen, navigation, theme}) {
         if (!confirmForm()) {
             return
         }
+        setLoadingAction(true)
         setNotification({...input})
             .then(mass => {
                 if (Array.isArray(mass)) {
@@ -202,6 +205,7 @@ function Add({route, screen, navigation, theme}) {
         if(edit){
             await removeFullInput(edit, edit.key)
         }
+        setLoadingAction(false)
         navigation.goBack()
     }
 
@@ -266,6 +270,7 @@ function Add({route, screen, navigation, theme}) {
                 {step3 && <InputDate input={input} startEnd={startEnd}/>}
                 {/*ADD BTN-----------------------------------------------*/}
                 {step3 && <View>
+                    <Loader/>
                     <Button
                         onPress={addInput}
                         buttonStyle={{height: 60, backgroundColor: theme.navBg}}
@@ -292,7 +297,7 @@ const mapStateToProps = (state) => ({
     theme: state.theme
 })
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = {setLoadingAction}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Add)
 
