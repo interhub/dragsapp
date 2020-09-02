@@ -26,8 +26,8 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper, s
 
         return Array(numberDay).fill(1).map((el, key) => {
             let obj = {
-                H: Math.ceil(hourStart),
-                M: key % 2 === 0 ? 30 : 0,
+                H: String(Math.ceil(hourStart)),
+                M: key % 2 === 0 ? '30' : '00',
                 key
             }
             hourStart += step
@@ -59,24 +59,6 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper, s
                         setVisible={setVisibleSelectUpdate}
                         themePaper={themePaper}/>
             <List.Section>
-                {/*<List.Item*/}
-                {/*    titleStyle={{textAlign: 'center'}}*/}
-                {/*    title={input.time.length}*/}
-                {/*    right={(props) =>*/}
-                {/*        <TouchableRipple onPress={() => {*/}
-                {/*            setVisibleSelect(true)*/}
-                {/*        }}>*/}
-                {/*            <List.Icon {...props}*/}
-                {/*                       icon="plus" color={theme.navBg}/>*/}
-                {/*        </TouchableRipple>}*/}
-                {/*    left={(props) =>*/}
-                {/*        <TouchableRipple onPress={() => {*/}
-                {/*            removeTime(input.time.length - 1)*/}
-                {/*        }}>*/}
-                {/*            <List.Icon {...props}*/}
-                {/*                       icon="minus"*/}
-                {/*                       color={theme.navBg}/>*/}
-                {/*        </TouchableRipple>}/>*/}
                 <TextInput
                     value={numberDay ? String(numberDay) : ''}
                     keyboardType={'number-pad'}
@@ -86,13 +68,12 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper, s
                     label={'Сколько раз в день'}
                     onChangeText={(text) => {
                         let num = parseInt(text) || 0
-                        if (num > 50) {
-                            return setNumberDay(50)
+                        if (num > 30) {
+                            return setNumberDay(30)
                         }
                         setNumberDay(num)
                     }}/>
                 {/*СНОВНОЙ СПИСОК*/}
-                {/*<List.Subheader>Ваше расписание</List.Subheader>*/}
                 <HelperText type={'info'} visible={true}>
                     Ваше расписание
                 </HelperText>

@@ -3,8 +3,8 @@ import {AsyncStorage, Dimensions, StyleSheet, View} from 'react-native';
 import {connect} from "react-redux";
 import {Divider, List} from "react-native-paper";
 import ListAllInputs from "../../comps/ListAllInputs";
-import * as Notifications from "expo-notifications";
 import removeFullInput from "../../vars/removeFullInput";
+import AddBtn from "../../comps/AddBtn";
 
 const H = Dimensions.get('screen').height;
 const W = Dimensions.get('screen').width;
@@ -21,7 +21,7 @@ function Details({navigation, theme}) {
                 AsyncStorage.getItem('input')
                     .then((data) => {
                         if (data !== null) {
-                            let result = (JSON.parse(data)).map((el, key) => ({...el, key}))    ;
+                            let result = (JSON.parse(data)).map((el, key) => ({...el, key}));
                             setList(result)
                             // console.log(result, 'PRINT')
                         }
@@ -31,16 +31,17 @@ function Details({navigation, theme}) {
     }, []);
 
     return (
-        <View>
-            <View style={styles.container}>
-                <List.Section>
-                    <List.Subheader>Просмотр всех записей</List.Subheader>
-                    <Divider/>
-                    {list && list.length > 0 &&
-                    <ListAllInputs list={list} removeInput={(a,b)=>removeFullInput(a,b,setList)} navigation={navigation} theme={theme}/>
-                    }
-                    <View style={{height:1000, }} />
-                </List.Section>
+        <View style={styles.container}>
+            <List.Subheader>Просмотр всех записей</List.Subheader>
+            <Divider/>
+            <View style={{height: H - 220}}>
+                {list && list.length > 0 &&
+                <ListAllInputs list={list} removeInput={(a, b) => removeFullInput(a, b, setList)}
+                               navigation={navigation} theme={theme}/>}
+                {list && list.length === 0 &&
+                <View style={{paddingHorizontal: 20, marginTop: 100}}>
+                    <AddBtn/>
+                </View>}
             </View>
         </View>
     );

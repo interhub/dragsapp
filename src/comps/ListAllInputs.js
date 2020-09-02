@@ -1,12 +1,14 @@
 import {AsyncStorage, Dimensions, View} from "react-native";
 import ListItem from "../pages/Details/ListItem";
 import LeftTime from "./LeftTime";
-import {TouchableRipple} from "react-native-paper";
+import {Button, TouchableRipple} from "react-native-paper";
 import RightOk from "./RightOk";
 import uploadInput from "../vars/uploadInput";
 import {SwipeListView} from "react-native-swipe-list-view";
 import React, {useRef} from "react";
 import {ADD, HOME} from "../store/screenNames";
+import {Entypo} from "@expo/vector-icons";
+import AddBtn from "./AddBtn";
 
 
 const H = Dimensions.get('screen').height
@@ -37,6 +39,11 @@ export default ({list, navigation, theme, removeInput}) => {
     }
 
     return <SwipeListView
+        ListFooterComponent={
+            <View style={{paddingHorizontal:30, marginVertical:30}}>
+                <AddBtn/>
+            </View>
+        }
         ref={rowRef}
         onRowClose={() => {
             close = true
@@ -75,6 +82,8 @@ export default ({list, navigation, theme, removeInput}) => {
                 </View>
             </View>
         )}
+        // style={{ flex:1}}
+
         onLeftActionStatusChange={({isActivated}) => {
             if (close && isActivated) {
                 close = false

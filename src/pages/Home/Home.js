@@ -18,6 +18,7 @@ import {setOpenSetting, setUpdateCount} from "../../store/actions";
 import CalendarBanner from "./CalendarBanner";
 import ListAllInputs from "../../comps/ListAllInputs";
 import * as Notifications from "expo-notifications";
+import AddBtn from "../../comps/AddBtn";
 
 const H = Dimensions.get('screen').height
 const W = Dimensions.get('screen').width
@@ -73,12 +74,9 @@ function Home({theme, navigation, setOpenSetting, counter}) {
         });
 
         //UPDATE NEW LIST !!!
-        // navigation.addListener('focus', () => {
-        //     updateList
-        // })
-        // navigation.addListener('tabPress', () => {
-        //     updateList
-        // })
+        navigation.addListener('focus', () => {
+            updateList()
+        })
     }, [])
 
     const updateList = () => (async () => {
@@ -128,22 +126,19 @@ function Home({theme, navigation, setOpenSetting, counter}) {
                         <ListAllInputs list={list} setList={setList} removeInput={removeInputTodayOnly}
                                        navigation={navigation} theme={theme}/>
                         }
-                        {list && list.length === 0 &&
-                        <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>Сегодня ничего принимать
-                            не нужно</Text>}
+                        {list && list.length === 0 && <View>
+                            <Text style={{textAlign: 'center', marginTop: 0.2 * H, fontSize: 16}}>
+                                Сегодня ничего
+                                принимать
+                                не нужно</Text>
+                            <View style={{paddingHorizontal:20, marginTop: 100}} >
+                                <AddBtn/>
+                            </View>
+                        </View>
+                        }
                     </List.Section>
                 </View>
-                <Button color={theme.topBg}
-                        contentStyle={{height: '100%'}}
-                        icon={() => <Entypo name="plus" size={24} color="#fff"/>}
-                        mode="contained"
-                        labelStyle={{color: '#fff'}}
-                        style={styles.btnAdd}
-                        onPress={() =>
-                            navigation.navigate(ADD)
-                        }>
-                    Новое напоминание
-                </Button>
+
             </ImageBackground>
         </View>
     );
@@ -179,9 +174,9 @@ const styles = StyleSheet.create({
     },
     btnAdd: {
         height: 60,
-        justifyContent: 'center',
+        // justifyContent: 'center',
         // marginBottom: H * 0.1,
-        position: 'absolute',
-        bottom: 0.1 * H
+        // position: 'absolute',
+        // bottom: 0.1 * H
     }
 });

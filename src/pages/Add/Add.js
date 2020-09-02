@@ -5,7 +5,6 @@ import {connect} from "react-redux";
 import {Button} from "react-native-elements";
 import setNotification from "../../service/notification";
 import PeriodsName from '../../vars/periodsName.js'
-import {DETAILS} from "../../store/screenNames";
 import SelectPeriod from "./SelectPeriod";
 import SelectTypes from "./SelectTypes";
 import InputDate from "./InputDate";
@@ -168,8 +167,7 @@ function Add({route, screen, navigation, theme}) {
                 }
             })
             .then(() => {
-                navigation.goBack()
-                navigation.jumpTo(DETAILS)
+                removeThisItemFull()
             })
     }
 
@@ -200,8 +198,10 @@ function Add({route, screen, navigation, theme}) {
             })
     }
 
-    const removeThisItemFull = () => {
-        removeFullInput(edit, edit.key)
+    const removeThisItemFull = async () => {
+        if(edit){
+            await removeFullInput(edit, edit.key)
+        }
         navigation.goBack()
     }
 
