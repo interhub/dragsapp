@@ -17,6 +17,7 @@ import Message from "../../comps/Message";
 import typesName from "../../vars/typesName";
 import moment from "moment";
 import SelfPeriod from "./SelfPeriod";
+import removeFullInput from "../../vars/removeFullInput";
 
 const H = Dimensions.get('screen').height;
 
@@ -202,6 +203,11 @@ function Add({route, screen, navigation, theme}) {
             })
     }
 
+    const removeThisItemFull = () => {
+        removeFullInput(edit, edit.key)
+        navigation.goBack()
+    }
+
     const step1 = input.name !== '';
     const step2 = step1 && input.type !== '' && input.dose !== 0;
     const step3 = step2 && input.period !== '' && input.selfPeriod > 0;
@@ -264,7 +270,16 @@ function Add({route, screen, navigation, theme}) {
                         onPress={addInput}
                         buttonStyle={{height: 60, backgroundColor: theme.navBg}}
                         containerStyle={{padding: 15}}
+                        titleStyle={{textTransform:'uppercase'}}
                         title={'Сохранить напоминание'}/>
+                </View>}
+                {edit && <View>
+                    <Button
+                        onPress={removeThisItemFull}
+                        buttonStyle={{height: 60, backgroundColor: undefined}}
+                        containerStyle={{padding: 15}}
+                        titleStyle={{color: 'red',textTransform:'uppercase'}}
+                        title={'Удалить напоминание'}/>
                 </View>}
             </View>
         </ScrollView>

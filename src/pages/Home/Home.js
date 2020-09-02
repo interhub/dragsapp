@@ -1,5 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {AsyncStorage, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View, LayoutAnimation } from 'react-native';
+import {
+    AsyncStorage,
+    Dimensions,
+    ImageBackground,
+    LayoutAnimation,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {connect} from "react-redux";
 import {Button, List} from "react-native-paper";
 import {ADD} from "../../store/screenNames";
@@ -16,6 +25,7 @@ const W = Dimensions.get('screen').width
 
 function Home({theme, navigation, setOpenSetting}) {
     const [list, setList] = useState([]);
+
     const getListOnDay = async (date) => {
         //TODO 1. найти из планирования все позиции с сегодняшней датой, найти из памяти все позиции с данным идентификатором 3. добавить в список (при удалении из планирования по id оно перестанет появляться)
         //возвращать новую сущность (объект input с массивом из одного времени)
@@ -35,13 +45,14 @@ function Home({theme, navigation, setOpenSetting}) {
                             time: [{H: new Date(value).getHours(), M: new Date(value).getMinutes()}],
                             key
                         }
-                    }).sort((a, b) => a.value - b.value)
+                    })
+                        .filter(el=>el.id)
+                        .sort((a, b) => a.value - b.value)
                 }
             })
     }
 
     const [activeDay, setActiveDay] = useState(Date.now())
-
 
     useEffect(() => {
         navigation.setOptions({
@@ -68,6 +79,7 @@ function Home({theme, navigation, setOpenSetting}) {
     }, [])
 
     const updateList = () => (async () => {
+        console.warn('update list home',)
         setList(await getListOnDay(activeDay))
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     })()
@@ -78,21 +90,6 @@ function Home({theme, navigation, setOpenSetting}) {
 
     const removeInputTodayOnly = async (el, key) => {
         try {
-            //TODO 1. убрать все уведомления по времени на сегодня 2. просмотреть наличие уведомлений по данному напоминанию на сегодня 2. убрать иднетификатор уведомления из списка в input  сохранить в стор, перезаписать лист,
-            // let items = await AsyncStorage.getItem('input')
-            // items = items ? JSON.parse(items) : []
-            // let item = items[key]
-            //
-            // let actualItems = (await Notifications.getAllScheduledNotificationsAsync())?.filter((el, id) => {
-            //     return moment(el.trigger.value).isSame(activeDay, 'days')
-            // })
-            // return console.warn('ITEM KEY=', actualItems, key, item,)
-            // items.splice(key, 1)
-            // setList(items)
-            // item?.id?.map(str => {
-            //     Notifications.dismissNotificationAsync(str || '')
-            // });
-            // await AsyncStorage.setItem('input', JSON.stringify(items));
             await Notifications.cancelScheduledNotificationAsync(el.identifier || '')
             updateList()
         } catch (e) {

@@ -27,9 +27,10 @@ const CalendarBanner = ({theme, activeDay, setActiveDay}) => {
     }, [weeks])
 
     const getArrayDateByDate = (date) => {
+        let weekDaysNum = 7
         let now = date.valueOf()
-        let firstMonday
-        Array(6).fill(1).map((_, id) => {
+        let firstMonday = now
+        Array(weekDaysNum).fill(1).map((_, id) => {
             let date = new Date(now).setDate(new Date(now).getDate() - id)
             let isFirst = new Date(date).getDay() === 1
             if (isFirst) {
@@ -37,9 +38,8 @@ const CalendarBanner = ({theme, activeDay, setActiveDay}) => {
             }
         })
         //1- пн 2-вт 3-ср 4-чт 5-пт 6-сб 7-вск
-        let firstDayIndex = new Date(firstMonday).getDay() === 0 ? 7 : new Date(now).getDay()
-        let next = Array(7-firstDayIndex).fill(1).map((_, i) => new Date(now).setDate(new Date(now).getDate() + 1 + i))
-        return ([firstMonday, ...next])
+        let nextDays = Array(weekDaysNum - 1).fill(1).map((_, i) => new Date(firstMonday).setDate(new Date(firstMonday).getDate() + i + 1))
+        return ([firstMonday, ...nextDays])
     }
 
     const scroll = useRef(null)
@@ -60,6 +60,7 @@ const CalendarBanner = ({theme, activeDay, setActiveDay}) => {
                     return <View key={id} style={{width: W, height: 'auto', flexDirection: 'row'}}>
                         {week.map((el, id) => {
                             const getThisDate = () => new Date(activeDay).getDate() === new Date(el).getDate();
+                            const getStaticDate = () => new Date().getDate() === new Date(el).getDate();
                             return <View key={id} style={styles.col}>
                                 <View>
                                     <Text style={styles.text}>
@@ -70,7 +71,7 @@ const CalendarBanner = ({theme, activeDay, setActiveDay}) => {
                                     onPress={() => setActiveDay(el)}
                                     style={styles.week}>
                                     <Text
-                                        style={[styles.text, (getThisDate() ? styles.activeText : {}), {marginTop: -2}]}>
+                                        style={[styles.text, (getThisDate() ? styles.activeText : getStaticDate()? styles.staticText:{}), {marginTop: -2}]}>
                                         {weekDays.find(d => d.value === new Date(el).getDay()).label}
                                     </Text>
                                 </TouchableRipple>
@@ -105,6 +106,11 @@ const styles = StyleSheet.create({
     activeText: {
         color: '#0D48A1',
         backgroundColor: '#fff',
+        borderRadius: 150
+    },
+    staticText:{
+        color: '#ffffff',
+        backgroundColor: '#173388',
         borderRadius: 150
     },
     col: {flex: 1, height: '100%', alignItems: 'center'},
