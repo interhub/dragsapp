@@ -1,13 +1,13 @@
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {View} from "react-native";
-import {Divider, HelperText, List} from "react-native-paper";
+import {HelperText, List, TextInput} from "react-native-paper";
 import TouchableRipple from "react-native-paper/src/components/TouchableRipple/index.native";
 import {SwipeListView} from 'react-native-swipe-list-view';
 import {FontAwesome} from "@expo/vector-icons";
 import ListMoveItem from "./ListMoveItem";
 import TimeDialog from "./TimeDialog";
 
-const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) => {
+const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper, setInput}) => {
 
     const updatePicker = useRef(null)
     const picker = useRef(null)
@@ -16,6 +16,32 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) 
     const [visibleSelect, setVisibleSelect] = useState(false)
     const [visibleSelectUpdate, setVisibleSelectUpdate] = useState(false)
     const [updateKey, setUpdateKey] = useState(-1)
+    const [numberDay, setNumberDay] = useState(1);
+
+    const getTimesByNumber = () => {
+        let hourStart = 8
+        let hourEnd = 23
+        let diff = hourEnd - hourStart
+        let step = diff / numberDay;
+
+        return Array(numberDay).fill(1).map((el, key) => {
+            let obj = {
+                H: Math.ceil(hourStart),
+                M: key % 2 === 0 ? 30 : 0,
+                key
+            }
+            hourStart += step
+            return obj
+        })
+
+    }
+
+    useEffect(() => {
+        const time = getTimesByNumber()
+        console.warn(time)
+        setInput({...input, time})
+    }, [numberDay])
+
     return (
         <View>
             <TimeDialog visible={visibleSelect}
@@ -33,30 +59,38 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper}) 
                         setVisible={setVisibleSelectUpdate}
                         themePaper={themePaper}/>
             <List.Section>
-                {/*<List.Subheader>Сколько раз в день</List.Subheader>*/}
-                <HelperText type={'info'} visible={true}>
-                    Сколько раз в день
-                </HelperText>
-                <List.Item
-                    titleStyle={{textAlign: 'center'}}
-                    title={input.time.length}
-                    right={(props) =>
-                        <TouchableRipple onPress={() => {
-                            setVisibleSelect(true)
-                        }}>
-
-                            <List.Icon {...props}
-                                       icon="plus" color={theme.navBg}/>
-                        </TouchableRipple>}
-                    left={(props) =>
-                        <TouchableRipple onPress={() => {
-                            removeTime(input.time.length - 1)
-                        }}>
-                            <List.Icon {...props}
-                                       icon="minus"
-                                       color={theme.navBg}/>
-                        </TouchableRipple>}/>
-                {/*<Divider/>*/}
+                {/*<List.Item*/}
+                {/*    titleStyle={{textAlign: 'center'}}*/}
+                {/*    title={input.time.length}*/}
+                {/*    right={(props) =>*/}
+                {/*        <TouchableRipple onPress={() => {*/}
+                {/*            setVisibleSelect(true)*/}
+                {/*        }}>*/}
+                {/*            <List.Icon {...props}*/}
+                {/*                       icon="plus" color={theme.navBg}/>*/}
+                {/*        </TouchableRipple>}*/}
+                {/*    left={(props) =>*/}
+                {/*        <TouchableRipple onPress={() => {*/}
+                {/*            removeTime(input.time.length - 1)*/}
+                {/*        }}>*/}
+                {/*            <List.Icon {...props}*/}
+                {/*                       icon="minus"*/}
+                {/*                       color={theme.navBg}/>*/}
+                {/*        </TouchableRipple>}/>*/}
+                <TextInput
+                    value={numberDay ? String(numberDay) : ''}
+                    keyboardType={'number-pad'}
+                    theme={{colors: themePaper.colors}}
+                    mode={'flat'}
+                    style={{height: 70}}
+                    label={'Сколько раз в день'}
+                    onChangeText={(text) => {
+                        let num = parseInt(text) || 0
+                        if (num > 50) {
+                            return setNumberDay(50)
+                        }
+                        setNumberDay(num)
+                    }}/>
                 {/*СНОВНОЙ СПИСОК*/}
                 {/*<List.Subheader>Ваше расписание</List.Subheader>*/}
                 <HelperText type={'info'} visible={true}>

@@ -253,12 +253,15 @@ function Add({route, screen, navigation, theme}) {
                 </View>
                 {/*{step3 && <Divider/>}*/}
                 {/*LIST TIMES+PICKER PANELS-----------------------------------------------*/}
-                {step3 && <TimePanel input={input}
-                                     themePaper={themePaper}
-                                     removeTime={removeTime}
-                                     theme={theme}
-                                     addTime={addTime}
-                                     updateTime={updateTime}/>}
+                <View style={{height: step3 ? 'auto' : 0, overflow: 'hidden'}}>
+                    <TimePanel input={input}
+                               setInput={setInput}
+                               themePaper={themePaper}
+                               removeTime={removeTime}
+                               theme={theme}
+                               addTime={addTime}
+                               updateTime={updateTime}/>
+                </View>
                 {/*DATE PICKERS-----------------------------------------------*/}
                 {step3 && <InputDate input={input} startEnd={startEnd}/>}
                 {/*ADD BTN-----------------------------------------------*/}

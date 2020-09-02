@@ -29,13 +29,13 @@ export default ({input, onSelectType, onSelectDose, themePaper}) => {
                     <TextInput
                         theme={{colors: themePaper.colors}}
                         editable={false}
-                        defaultValue={types.find(el => el.value === input.type)?.label || ''}
+                        value={types.find(el => el.value === input.type)?.label || ''}
                         style={{height: 70}}
                         label={'Ед. измерения'}
                         placeholder={'Ед. измерения'}
                     />
-                    <View style={{position:'absolute', right:10, bottom: '28%'}} >
-                        <AntDesign name="caretdown" size={8} color="black" />
+                    <View style={{position: 'absolute', right: 10, bottom: '28%'}}>
+                        <AntDesign name="caretdown" size={8} color="black"/>
                     </View>
                 </View>
             </TouchableRipple>
