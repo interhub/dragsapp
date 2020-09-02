@@ -1,4 +1,4 @@
-import { SET_NAME, SET_SETTING, SET_THEME } from "./actionNames"
+import {SET_COUNTER, SET_NAME, SET_SETTING, SET_THEME} from "./actionNames"
 
 export const setName = (name) => {
     return {
@@ -18,5 +18,12 @@ export const setOpenSetting = (openSetting) => {
     return {
         type: SET_SETTING,
         openSetting
+    }
+}
+
+export const setUpdateCount = (counter=0) => {
+    return {
+        type: SET_COUNTER,
+        counter
     }
 }

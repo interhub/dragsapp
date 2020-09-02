@@ -1,5 +1,5 @@
 import { createStore } from 'redux';
-import { SET_NAME, SET_SETTING, SET_THEME } from './actionNames';
+import {SET_COUNTER, SET_NAME, SET_SETTING, SET_THEME} from './actionNames';
 import initialState from './state';
 
 const reducer = ( state, action ) => {
@@ -15,6 +15,10 @@ const reducer = ( state, action ) => {
     case SET_SETTING:
       return {
         ...state, openSetting: action.openSetting
+      };
+    case SET_COUNTER:
+      return {
+        ...state, counter: action.counter
       };
     default:
       return {...state}

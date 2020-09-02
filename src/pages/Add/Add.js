@@ -169,10 +169,7 @@ function Add({route, screen, navigation, theme}) {
             })
             .then(() => {
                 navigation.goBack()
-                // navigation.dispatch(StackActions.popToTop());
-                setTimeout(() => {
-                    navigation.jumpTo(DETAILS)
-                }, 100)
+                navigation.jumpTo(DETAILS)
             })
     }
 
@@ -270,7 +267,7 @@ function Add({route, screen, navigation, theme}) {
                         onPress={addInput}
                         buttonStyle={{height: 60, backgroundColor: theme.navBg}}
                         containerStyle={{padding: 15}}
-                        titleStyle={{textTransform:'uppercase'}}
+                        titleStyle={{textTransform: 'uppercase'}}
                         title={'Сохранить напоминание'}/>
                 </View>}
                 {edit && <View>
@@ -278,7 +275,7 @@ function Add({route, screen, navigation, theme}) {
                         onPress={removeThisItemFull}
                         buttonStyle={{height: 60, backgroundColor: undefined}}
                         containerStyle={{padding: 15}}
-                        titleStyle={{color: 'red',textTransform:'uppercase'}}
+                        titleStyle={{color: 'red', textTransform: 'uppercase'}}
                         title={'Удалить напоминание'}/>
                 </View>}
             </View>

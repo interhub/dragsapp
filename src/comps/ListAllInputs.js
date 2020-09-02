@@ -6,7 +6,6 @@ import RightOk from "./RightOk";
 import uploadInput from "../vars/uploadInput";
 import {SwipeListView} from "react-native-swipe-list-view";
 import React, {useRef} from "react";
-import * as Notifications from "expo-notifications";
 import {ADD, HOME} from "../store/screenNames";
 
 
@@ -19,12 +18,22 @@ export default ({list, navigation, theme, removeInput}) => {
 
     const rowRef = useRef()
 
-    const editInput = (el) => {
+    const getIndexByName = async (name = '') => {
+        return AsyncStorage.getItem('input')
+            .then((data) => {
+                if (data) {
+                    let arr = JSON.parse(data) || []
+                    return arr.findIndex((el) => el.name === name) || 0
+                }
+            })
+    }
+
+
+    const editInput = async (el) => {
         el.id = []
-        navigation.jumpTo(HOME, {callback: () => alert('hi')});
-        setTimeout(() => {
-            navigation.push(ADD, {edit: el})
-        }, 300)
+        const key = await getIndexByName(el.name);
+        navigation.jumpTo(HOME);
+        navigation.push(ADD, {edit: {...el, key}})
     }
 
     return <SwipeListView
@@ -41,7 +50,7 @@ export default ({list, navigation, theme, removeInput}) => {
                 }}>
                 <ListItem theme={theme}
                           item={item}
-                          editInput={() => editInput(item)}
+                          editInput={() => editInput({...item})}
                 />
             </View>
         )}

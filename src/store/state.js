@@ -3,5 +3,6 @@ import { LightTheme, DarkTheme } from "./ColorThemes";
 export default {
   name: '',
   theme: {...LightTheme},
-  openSetting: false
+  openSetting: false,
+  counter: 0
 };

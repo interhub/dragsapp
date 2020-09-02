@@ -14,7 +14,7 @@ import {Button, List} from "react-native-paper";
 import {ADD} from "../../store/screenNames";
 import moment from 'moment'
 import {Entypo, FontAwesome} from "@expo/vector-icons";
-import {setOpenSetting} from "../../store/actions";
+import {setOpenSetting, setUpdateCount} from "../../store/actions";
 import CalendarBanner from "./CalendarBanner";
 import ListAllInputs from "../../comps/ListAllInputs";
 import * as Notifications from "expo-notifications";
@@ -23,7 +23,7 @@ const H = Dimensions.get('screen').height
 const W = Dimensions.get('screen').width
 
 
-function Home({theme, navigation, setOpenSetting}) {
+function Home({theme, navigation, setOpenSetting, counter}) {
     const [list, setList] = useState([]);
 
     const getListOnDay = async (date) => {
@@ -46,7 +46,7 @@ function Home({theme, navigation, setOpenSetting}) {
                             key
                         }
                     })
-                        .filter(el=>el.id)
+                        .filter(el => el.id)
                         .sort((a, b) => a.value - b.value)
                 }
             })
@@ -73,9 +73,12 @@ function Home({theme, navigation, setOpenSetting}) {
         });
 
         //UPDATE NEW LIST !!!
-        navigation.addListener('focus', () => {
-            updateList()
-        })
+        // navigation.addListener('focus', () => {
+        //     updateList
+        // })
+        // navigation.addListener('tabPress', () => {
+        //     updateList
+        // })
     }, [])
 
     const updateList = () => (async () => {
@@ -86,7 +89,7 @@ function Home({theme, navigation, setOpenSetting}) {
 
     useEffect(() => {
         updateList()
-    }, [activeDay])
+    }, [activeDay, counter])
 
     const removeInputTodayOnly = async (el, key) => {
         try {
@@ -96,6 +99,7 @@ function Home({theme, navigation, setOpenSetting}) {
             console.warn(e)
         }
     }
+
 
     return (
         <View style={{flex: 1, flexDirection: 'row'}}>
@@ -146,10 +150,12 @@ function Home({theme, navigation, setOpenSetting}) {
 }
 
 const mapStateToProps = (state) => ({
-    theme: state.theme
+    theme: state.theme,
+    counter: state.counter
 })
 const mapDispatchToProps = {
-    setOpenSetting
+    setOpenSetting,
+    setUpdateCount
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
