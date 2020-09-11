@@ -20,7 +20,7 @@ const ListItem = ({
             title={item?.name}
             titleStyle={{color: '#FFFFFF'}}
             descriptionStyle={{color: '#d9d9d9'}}
-            description={`${item?.time.map((t) => `${t.H}:${t.M}`).join(', ')}      ${item?.dose} ${Types.find(obj => obj?.value === item?.type)?.label}`}
+            description={`${item?.time.map((t) => `${t.H}:${t.M=='0'?'00':t.M}`).join(', ')}      ${item?.dose} ${Types.find(obj => obj?.value === item?.type)?.label}`}
         />
     )
 }

@@ -25,7 +25,7 @@ const getDaysArray = (
     //result array
     const result = []
     //разница в овремени до старта
-    let difToStart = start === 0 ? 0 : Math.abs(moment(start).diff(Date.now(), 'days')) + 1
+    let difToStart = start === 0 ? 0 : Math.abs(moment(start).diff(Date.now(), 'days'))
     //реальное максимальное ограничение на основе start end
     let realMax = ((end === 0) ? (MaxDays) : (MaxDays + difToStart));
     //период повторения
