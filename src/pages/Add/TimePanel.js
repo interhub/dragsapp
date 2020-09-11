@@ -67,16 +67,16 @@ const TimePanel = ({input, removeTime, theme, addTime, updateTime, themePaper, s
                     style={{height: 70}}
                     label={'Сколько раз в день'}
                     onChangeText={(text) => {
-                        let num = parseInt(text) || 0
+                        let num = parseInt(text) || 0;
                         if (num > 30) {
                             return setNumberDay(30)
                         }
                         setNumberDay(num)
                     }}/>
                 {/*СНОВНОЙ СПИСОК*/}
-                <HelperText type={'info'} visible={true}>
+                {input.time?.length > 0 && <HelperText type={'info'} visible={true}>
                     Ваше расписание
-                </HelperText>
+                </HelperText>}
                 <SwipeListView
                     useNativeDriver={false}
                     data={input.time}

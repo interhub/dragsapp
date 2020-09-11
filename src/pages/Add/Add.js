@@ -202,7 +202,7 @@ function Add({route, screen, navigation, theme, setLoadingAction}) {
     }
 
     const removeThisItemFull = async () => {
-        if(edit){
+        if (edit) {
             await removeFullInput(edit, edit.key)
         }
         setLoadingAction(false)
@@ -212,6 +212,7 @@ function Add({route, screen, navigation, theme, setLoadingAction}) {
     const step1 = input.name !== '';
     const step2 = step1 && input.type !== '' && input.dose !== 0;
     const step3 = step2 && input.period !== '' && input.selfPeriod > 0;
+    const step4 = step3 && input.time?.length > 0
 
     const showSelfInput = input.period === PeriodsName.PERIOD && step2
     const showCheckBox = input.period === PeriodsName.CHECKBOX && step2
@@ -267,9 +268,9 @@ function Add({route, screen, navigation, theme, setLoadingAction}) {
                                updateTime={updateTime}/>
                 </View>
                 {/*DATE PICKERS-----------------------------------------------*/}
-                {step3 && <InputDate input={input} startEnd={startEnd}/>}
+                {step4 && <InputDate input={input} startEnd={startEnd}/>}
                 {/*ADD BTN-----------------------------------------------*/}
-                {step3 && <View>
+                {step4 && <View>
                     <Loader/>
                     <Button
                         onPress={addInput}
